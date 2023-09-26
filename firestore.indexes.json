@@ -1,0 +1,33 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "documentosRespaldo",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "cuadrilla.integrantes.ewzFND28dOUTcRiW5FyN5G8387U2.isFirmado",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "porValidar",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "checklist.tipo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fechaCreacion",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

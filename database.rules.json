@@ -1,0 +1,18 @@
+{
+  "rules": {
+    ".read": "true",
+    ".write": "true",
+    "empresas":{
+      "$key_empresa":{
+       	"documentos":{
+     			".indexOn":["estado","fechaCreacion","correlativo",".value","fechaCreacionInt"],   
+        },
+        "documentos_por_mes":{
+          "$key_documento_por_mes": {
+            ".indexOn":["estado","fechaCreacion","correlativo",".value","fechaCreacionInt"]
+          }
+        }
+      }
+    }
+  }
+}

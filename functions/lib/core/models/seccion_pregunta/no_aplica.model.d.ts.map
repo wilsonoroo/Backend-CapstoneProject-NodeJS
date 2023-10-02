@@ -1,0 +1,1 @@
+{"version":3,"file":"no_aplica.model.d.ts","sourceRoot":"","sources":["../../../../src/core/models/seccion_pregunta/no_aplica.model.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,iBAAiB,EAAC,MAAM,6BAA6B,CAAC;AAE9D,qBAAa,QAAQ;IACnB,KAAK,EAAG,OAAO,CAAC;IAChB,UAAU,EAAG,OAAO,CAAC;IACrB,QAAQ,EAAG,KAAK,CAAC,iBAAiB,CAAC,CAAC;IACpC,UAAU,EAAG,KAAK,CAAC,iBAAiB,CAAC,CAAC;CACvC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"excepcions.d.ts","sourceRoot":"","sources":["../../../../src/core/models/repositorio/excepcions.ts"],"names":[],"mappings":"AAAA,qBAAa,WAAW;IACtB,OAAO,EAAE,MAAM,CAAC;IAChB,KAAK,EAAE,MAAM,CAAC;gBACF,KAAK,EAAE,MAAM,EAAE,OAAO,EAAE,MAAM;CAI3C"}

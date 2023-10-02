@@ -1,0 +1,1 @@
+{"version":3,"file":"instructivoSeguridad.d.ts","sourceRoot":"","sources":["../../../../src/core/models/check_list/instructivoSeguridad.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,mBAAmB,CAAC;AAE9C,qBAAa,oBAAqB,SAAQ,SAAS;IACjD,OAAO,CAAC,EAAE,MAAM,CAAC;gBACL,SAAS,EAAE,SAAS;CAIjC"}

@@ -4,6 +4,7 @@ import * as admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
 admin.initializeApp();
+const db = admin.firestore();
 
 export const conta3 = functions.firestore.document('empresas/{cliente}/documentos/{id}')
 .onCreate(async (snapshot, context) => {
@@ -33,10 +34,6 @@ export const conta3 = functions.firestore.document('empresas/{cliente}/documento
 });
 
 
-admin.initializeApp();
-
-const db = admin.firestore();
-
 export const agregar = functions.https.onRequest(async (req, res) => {
     try {
         // Crear o actualizar la empresa llamada "vaku"
@@ -48,7 +45,7 @@ export const agregar = functions.https.onRequest(async (req, res) => {
         // Crear una subcolección "documentos" para "vaku"
         const documentoRef = empresaRef.collection('documentos').doc();
         await documentoRef.set({
-            // Agrega aquí cualquier dato inicial que quieras para el documento
+        // Agrega aquí cualquier dato inicial que quieras para el documento
         });
 
         res.send('Empresa "vaku" y su colección "documentos" creados con éxito!');

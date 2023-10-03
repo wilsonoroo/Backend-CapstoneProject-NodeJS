@@ -33,7 +33,6 @@ export const conta3 = functions.firestore.document('empresas/{cliente}/documento
 });
 
 
-admin.initializeApp();
 
 const db = admin.firestore();
 

@@ -5,3 +5,5 @@ export * from './integrante';
 export * from './planDeSeguimiento';
 export * from './respuesta';
 export * from './seccionRespuesta';
+export * from './vehiculo';
+export * from './herramienta';

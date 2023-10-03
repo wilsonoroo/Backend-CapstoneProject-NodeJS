@@ -10,3 +10,7 @@ export * from './herramienta';
 export * from './equipo';
 export * from './division';
 export * from './gerencia';
+export * from './configEmb';
+export * from './correlativo';
+export * from './archivoEmb';
+export * from './empresa';

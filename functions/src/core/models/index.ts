@@ -7,3 +7,6 @@ export * from './respuesta';
 export * from './seccionRespuesta';
 export * from './vehiculo';
 export * from './herramienta';
+export * from './equipo';
+export * from './division';
+export * from './gerencia';

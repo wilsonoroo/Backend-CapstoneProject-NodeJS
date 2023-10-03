@@ -1,5 +1,6 @@
 import { IDocumento } from "../../interface";
 import { firestore } from "firebase-admin"; // Asegúrate de haber instalado e importado el paquete correcto
+//import { respuestaModel } from "../respuesta";
 const db = firestore();
 export class Documento implements IDocumento<string,string,string,string,string>{
     id: string;

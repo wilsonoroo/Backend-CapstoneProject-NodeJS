@@ -1,4 +1,4 @@
-export interface iIntegrante<AUTH>{
+export interface IIntegrante<AUTH>{
     id: string;
     rut: string;
     cargo: string;

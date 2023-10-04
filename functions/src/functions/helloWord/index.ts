@@ -15,8 +15,7 @@ export const helloWorld = onRequest((request: Request, response: Response) => {
 	const repoGlobal2 = new FirestoreRepository<Documento>('docGlobal')
 
 	const repoUsuario = new FirestoreRepository<User>('empresa/id/usuarios')
-	repo
-		.getDocument<Documento>('0d96a303aa')
+	repo.getDocument<Documento>('0d96a303aa')
 		.then((doc) => {
 			console.log('hola mubndo')
 
@@ -42,4 +41,48 @@ export const helloWorld = onRequest((request: Request, response: Response) => {
 	repo.getAlldocuments().then((docs) => {
 		console.log(docs)
 	})
+})
+export const updata2 = onRequest((request: Request, response: Response) => {
+	const doc2 = new Documento()
+	doc2.estado = 'en_espera_del_boss'
+
+	const repo = new FirestoreRepository<Documento>('/empresa/id/usuarios')
+	repo.updateDocumentParcial<Documento>('id1',JSON.parse(JSON.stringify(doc2))).then((doc) => {
+		console.log(doc)
+		response.send(doc)
+		console.log('update save ok!!')
+
+	}).catch((error) => {
+		console.error(error)
+	});
+
+})
+export const deleteando = onRequest((request: Request, response: Response) => {
+	const doc2 = new Documento()
+	doc2.estado = 'en_espera_del_boss'
+
+	const repo = new FirestoreRepository<Documento>('/empresa/id/usuarios')
+	repo.deleteDocument<Documento>('id2').then((doc) => {
+		console.log(doc)
+		response.send('deleteado  ok!!')
+		console.log('deleteado  oks!!')
+
+	}).catch((error) => {
+		console.error(error)
+	});
+
+})
+export const agregando = onRequest((request: Request, response: Response) => {
+	const doc2 = new Documento();
+	doc2.id = 'id4';
+	doc2.isConCuadrilla= true;
+	doc2.estado = 'en_espera_del_boss';
+
+	const repo = new FirestoreRepository<Documento>('/documentos')
+	const idAux = doc2.id;
+	repo.addDocumentById(idAux,JSON.parse(JSON.stringify(doc2))).then((doc)=> {
+		response.send('nuevo save ok!!')
+	}).catch((error) => {
+		console.error(error)})
+
 })

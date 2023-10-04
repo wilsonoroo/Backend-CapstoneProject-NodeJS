@@ -92,10 +92,34 @@ export class FirestoreRepository<T> implements IRepository<any> {
 		throw new Error('Method not implemented.')
 	}
 	updateDocumentParcial<T>(documentId: string, documentPartial: any): Promise<void> {
-		throw new Error('Method not implemented.')
+		return new Promise((resolve, reject) => {
+			this.db
+			.collection(this.reference)
+			.doc(documentId)
+			.update(documentPartial as any)
+			.then(() => {
+				resolve()
+			})
+			.catch((error) => {
+				reject(error)
+			});
+		})
 	}
-	deleteDocument(documentId: string): Promise<void> {
-		throw new Error('Method not implemented.')
+
+
+	deleteDocument<T>(documentId: string): Promise<void> {
+		return new Promise((resolve, reject) => {	
+				this.db
+				.collection(this.reference)
+				.doc(documentId)
+				.delete()
+				.then(() => {
+					resolve();
+				})
+				.catch((error) => {
+					reject(error);
+				});
+			})
 	}
 
 	deleteCollection(collectionName: string): Promise<boolean> {

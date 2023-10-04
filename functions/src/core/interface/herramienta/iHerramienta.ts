@@ -7,5 +7,5 @@ export interface IHerramienta<ENUMCATEGORIA> {
     modelo: string;
     isServicio: boolean;
     categoria: ENUMCATEGORIA;
-    metadata: Map<any, any>; // que se pone en metadata
+    metadata: any[]; // que se pone en metadata
 }

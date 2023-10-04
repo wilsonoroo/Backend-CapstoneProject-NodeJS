@@ -7,5 +7,5 @@ export interface IEquipo <CATEGORIAEQUIPO> {
     modelo: string;
     isServicio: boolean;
     categoria: CATEGORIAEQUIPO;
-    metadata: Map<any, any>; // QUE VALOR SE PONE EN METADATA
+    metadata: any[]; // QUE VALOR SE PONE EN METADATA
 }

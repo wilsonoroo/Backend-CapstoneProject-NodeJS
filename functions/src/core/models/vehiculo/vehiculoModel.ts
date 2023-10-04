@@ -13,6 +13,6 @@ export class Vehiculo implements IVehiculo {
     ultimaMantencion: Date;
     isEliminado: boolean;
     isServicio: boolean;
-    metadata: Map<any, any>; // que va en metadata
+    metadata: any[]; // que va en metadata
     vencimientoRevisionTecnica: Date;
 }

@@ -8,7 +8,7 @@ export class Equipo implements IEquipo<CategoriaEquipoEnum> {
     modelo: string;
     isServicio: boolean;
     categoria: CategoriaEquipoEnum;
-    metadata: Map<any, any>;
+    metadata: any[];
 
 }
 enum CategoriaEquipoEnum {

@@ -8,7 +8,7 @@ export interface  IDivision <USUARIO,DOC,EQUIPO,HERRAMIENTA,VEHICULO,DOCUSUARIO,
     faena: string;
     responsable: USUARIO;
     tipoDivison: string;
-    documentos: DOC;
+    documentos: DOC[];
     usuarios: USUARIO;
     equipos: EQUIPO;
     herramienta: HERRAMIENTA;

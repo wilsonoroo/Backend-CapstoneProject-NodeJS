@@ -9,7 +9,7 @@ export class Herramienta implements IHerramienta<CategoriaHerramientaEnum> {
     modelo: string;
     isServicio: boolean;
     categoria: CategoriaHerramientaEnum;
-    metadata: Map<any, any>; // que se pone en metadata
+    metadata: any[]; // que se pone en metadata
 }
 enum CategoriaHerramientaEnum {
     // CUALES SON LAS CATEGORIAS DE HERRAMIENTAS QUE PUEDE HACER, EJMPLO:

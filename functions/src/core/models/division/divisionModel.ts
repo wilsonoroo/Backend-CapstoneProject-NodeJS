@@ -17,7 +17,7 @@ export class Division implements IDivision<string,Documento,Equipo,Herramienta,V
     faena: string;
     responsable: string; // definir tipo
     tipoDivison: string;
-    documentos: Documento;
+    documentos: Documento[]; //crear un tipo de dato que sea coleccion?
     usuarios: string; //definir tipo
     equipos: Equipo;
     herramienta: Herramienta;

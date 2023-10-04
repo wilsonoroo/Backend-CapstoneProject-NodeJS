@@ -1,14 +1,15 @@
-import { ISeccionRespuesta } from '../../interface';
-export class SeccionRespuesta<RESPUESTA, IMG> implements ISeccionRespuesta<RESPUESTA, IMG> {
+import {ISeccionRespuesta} from '../../interface'
 
-    id: string;
-    nombre: string;
-    index: number;
-    padre?: string;
-    instruccion: string;
-    isPaginate: boolean;
-    cantidad: number;
-    respuestas: RESPUESTA;
-    imagenReferencia: IMG;
-
+import {Fotografia} from '../fotografia'
+import {RespuestaModel} from '../respuesta'
+export class SeccionRespuesta implements ISeccionRespuesta<RespuestaModel, Fotografia> {
+	id: string
+	nombre: string
+	index: number
+	padre?: string
+	instruccion: string
+	isPaginate: boolean
+	cantidad: number
+	respuestas: RespuestaModel
+	imagenReferencia: Fotografia
 }

@@ -1,28 +1,35 @@
 import {IDocumento} from '../../interface'
 import {Checklist} from '../checklist'
+import { Cuadrilla } from '../cuadrilla'
 import {Encabezado} from '../encabezado'
-import {RespuestaModel} from '../respuesta'
+import {Respuesta} from '../respuesta'
 import {SeccionRespuesta} from '../seccionRespuesta'
 import {User} from '../usuario'
-//import { respuestaModel } from "../respuesta";
 
-export class Documento implements IDocumento<User, Checklist, Encabezado, SeccionRespuesta, RespuestaModel> {
-	id: string
-	encabezado: Encabezado
-	seccionesRespuestas: SeccionRespuesta
-	emisor: User
-	seccionesRespuestasValidacion: SeccionRespuesta
-	seccionesRespuestasChildren: SeccionRespuesta
-	fechaCreacion: Date
-	fechaSubida?: Date
-	fechaValidacion?: Date
-	estado: string
-	isPlanDeAccion: boolean
-	respuestasMalas: RespuestaModel
-	checklist: Checklist
-	pdf?: any //--> preguntar
-	vistos?: any // que tipo de dato es el vistos  -->preguntar
-	checklistChildren: Checklist
-	respuestasMalasChildren: RespuestaModel
-	dobleValidadorPor: User
+export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabezado, SeccionRespuesta, Respuesta> {
+	id: string;
+	checklist: Checklist;
+	checklistChildren: Checklist;
+	correlativo?: string;
+	cuadrilla?: Cuadrilla; 
+	emisor: User;
+	encabezado: Encabezado;
+	estado: string;
+	fechaCreacion: Date;
+	fechaSubida?: Date; //posiblemente no
+	fechaValidacion?: Date; //posiblemente no
+	fechaValidacionDobleChequeo?: Date;
+	isAutoValidado?: boolean;
+	isConCuadrilla?: boolean;
+	isParticipantesCruzados?: boolean;
+	isPlanDeAccion: boolean;
+	pdf?: any; //--> preguntar
+	respuestasMalas: Respuesta;
+	respuestasMalasChildren: Respuesta; //-->
+	seccionesRespuestas: SeccionRespuesta;
+	seccionesRespuestasChildren: SeccionRespuesta;
+	seccionesRespuestasValidacion: SeccionRespuesta;
+	validadPor?: User;
+	validadoDobleChequeoPor?: User;
+	vistos?: any;
 }

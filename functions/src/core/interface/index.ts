@@ -14,3 +14,6 @@ export * from './configEmb';
 export * from './correlativo';
 export * from './archivoEmb';
 export * from './empresa';
+export * from './archivo';
+export * from './imagenReferencia';
+export * from './usuario';

@@ -125,7 +125,46 @@ export class FirestoreRepository<T> implements IRepository<any> {
 	deleteCollection(collectionName: string): Promise<boolean> {
 		throw new Error('Method not implemented.')
 	};
-	addToCollection(collectionName: string, document: any): Promise<void> {
-		throw new Error('Method not implemented.')
+	addToCollection(collectionName: string, document: any,id:string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			this.db
+				.collection(this.reference)
+				.doc(id)
+				.collection(collectionName)
+				.add(document as any)
+				.then(() => {
+					resolve();
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
 	};
+
+	/**
+	 *
+	 *
+	 * @param {string} collectionName
+	 * @param {*} document
+	 * @param {string} documentId
+	 * @param {string} id
+	 * @return {*}  {Promise<void>}
+	 * @memberof FirestoreRepository
+	 */
+	addToCollectionById(collectionName: string, document: any, documentId: string, id: string): Promise<void> {
+		return new Promise((resolve, reject) => {
+			this.db
+				.collection(this.reference)
+				.doc(documentId)
+				.collection(collectionName)
+				.doc(id) // id que se va a agregar
+				.set(document as any)
+				.then(() => {
+					resolve();
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
+	}
 }

@@ -18,5 +18,7 @@ interface IRepository<T> {
 
 	// metodos soaciados a CRUD de colecciones
 	deleteCollection<T>(collectionName: string): Promise<boolean>
-	addToCollection(collectionName: string, document: any): Promise<void>
+	addToCollection(collectionName: string, document: any,id:string): Promise<void>
+	addToCollectionById(collectionName: string, document: any, documentId: string, id: string): Promise<void>
+
 }

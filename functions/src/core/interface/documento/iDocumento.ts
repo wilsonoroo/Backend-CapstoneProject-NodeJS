@@ -16,7 +16,7 @@ export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, 
 	isParticipantesCruzados?: boolean;
 	isPlanDeAccion: boolean;
 	pdf?: any; //--> preguntar
-	respuestasMalas: RESPUESTA;
+	respuestasMalas: RESPUESTA[];
 	respuestasMalasChildren: RESPUESTA;
 	seccionesRespuestas: SECCIONRESP;
 	seccionesRespuestasChildren: SECCIONRESP;

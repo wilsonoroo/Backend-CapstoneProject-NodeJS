@@ -77,7 +77,7 @@ export const flujoGeneracionDocumentos = onRequest(async(request: Request, respo
 
 
     }
-    response.send(`  documento con estado ${doc.estado} enviando a ${doc.emisor.email}`)
+    response.send(`documento con estado ${doc.estado} enviando a ${doc.emisor.email}`)
 
 
 

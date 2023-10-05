@@ -4,7 +4,7 @@ import {onRequest} from 'firebase-functions/v2/https'
 //const {getFirestore} = require("firebase-admin/firestore");
 import {Request, Response} from 'firebase-functions'
 
-import {Documento, User} from '../../core/models'
+import {Documento, User, Respuesta} from '../../core/models'
 import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository'
 
 export const helloWorld = onRequest((request: Request, response: Response) => {
@@ -91,3 +91,67 @@ export const agregando = onRequest((request: Request, response: Response) => {
 		console.error(error)})
 
 })
+
+export const agregarColeccion = onRequest((request: Request, response: Response) => {
+	const repo = new FirestoreRepository<Documento>('/documentos')
+	const doc2 = crearDoc();
+	repo.addDocumentById(doc2.id,JSON.parse(JSON.stringify(doc2))).then((doc)=> {
+        response.send('sea agrego el documento')
+		console.log("Se agrego el documento de manera correcta dentro de la bd")
+    }).catch((error) => {
+        console.error(error)});
+	doc2.respuestasMalas.forEach(async respuestaMala => {
+		await repo.addToCollectionById("RespuestaMala",JSON.parse(JSON.stringify(respuestaMala)),doc2.id,respuestaMala.id)
+		.then(() => 
+		// response.send('se agrego la coleccion dentro del documento la respuesta mala 2')
+		console.log("se agrego la coleccion dentro del documento en el for",respuestaMala.id)
+		).catch((error) => {
+			console.error(error)
+		});
+	});
+
+	// repo.addToCollection("RespuestasMalas",JSON.parse(JSON.stringify(user)),"doc2")
+	// .then(()=> {
+	// 	response.send('nueva coleccion ok!!')
+	// }).catch((error) => {
+	// 	console.error(error)
+	// })
+	// const RespuestasBuenas = new SeccionPregunta();
+	// RespuestasBuenas.id = 'p1';
+	// RespuestasBuenas.nombre = 'Nublado';
+	// RespuestasBuenas.titulo = '¿Esta nublaado?';
+
+	// repo.addToCollectionById("RespuestasBuenas",JSON.parse(JSON.stringify(RespuestasBuenas)),"doc2",RespuestasBuenas.id); //
+	
+
+});
+function crearDoc(): Documento {
+	const user = new User();
+	user.id = 'idUsuarios';
+	user.email = 'idUsuarios@gmail.com';
+	const doc = new Documento();
+	doc.id = 'd1';
+	doc.isConCuadrilla= true;
+	doc.isAutoValidado = true;
+	doc.isPlanDeAccion = true;
+	doc.emisor = user;
+	doc.estado = 'generado';
+	doc.respuestasMalas = [];
+	const respuesta1 = new Respuesta();
+	respuesta1.id = 'r1';
+	respuesta1.contenido = 'contenido1';
+	respuesta1.titulo = 'titulo1';
+	respuesta1.tipo = 'tipo1';
+	const respuesta2 = new Respuesta();
+	respuesta2.id = 'r2';
+	respuesta2.contenido = 'contenido2';
+	respuesta2.titulo = 'titulo2';
+	respuesta2.tipo = 'tipo2';
+	const respuesta3 = new Respuesta();
+	respuesta3.id = 'r3';
+	respuesta3.contenido = 'contenido3';
+	respuesta3.titulo = 'titulo3';
+	respuesta3.tipo = 'tipo3';
+	doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
+	return doc
+}

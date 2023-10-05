@@ -74,9 +74,14 @@ export const deleteando = onRequest((request: Request, response: Response) => {
 })
 export const agregando = onRequest((request: Request, response: Response) => {
 	const doc2 = new Documento();
-	doc2.id = 'doc1';
+	doc2.id = 'doc2';
 	doc2.isConCuadrilla= true;
-	doc2.estado = 'en_espera_del_boss';
+	doc2.isAutoValidado =true;
+	doc2.isPlanDeAccion = true;
+	doc2.emisor = new User();
+	doc2.emisor.id = 'idUsuarios';
+	doc2.emisor.email = 'insetarCorreo.cl';
+	doc2.estado = 'generado';
 
 	const repo = new FirestoreRepository<Documento>('/documentos')
 	const idAux = doc2.id;

@@ -7,9 +7,9 @@ import {
 	// updatear,
 	helloWorld,
 	updata2,
+	actualizarFlujo,
+	flujoGeneracionDocumentos,
 } from './functions'
-import { flujoGeneracionDocumentos } from './functions/flujoDoc';
-
 // export const actualizar= updatear;
 export const salu2 = helloWorld;
 // export const escuchando = listener2;
@@ -20,3 +20,5 @@ export const actualizan2 = updata2;
 export const agregan2 = agregando;
 export const borrar= deleteando;
 export const flujo = flujoGeneracionDocumentos;
+//}export const escucharFlujo = escuchandoFlujo;
+export const escucharFluj2o = actualizarFlujo;

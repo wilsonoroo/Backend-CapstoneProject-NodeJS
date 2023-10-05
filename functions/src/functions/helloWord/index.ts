@@ -74,7 +74,7 @@ export const deleteando = onRequest((request: Request, response: Response) => {
 })
 export const agregando = onRequest((request: Request, response: Response) => {
 	const doc2 = new Documento();
-	doc2.id = 'id4';
+	doc2.id = 'doc1';
 	doc2.isConCuadrilla= true;
 	doc2.estado = 'en_espera_del_boss';
 

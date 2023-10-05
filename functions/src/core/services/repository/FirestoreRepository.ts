@@ -30,7 +30,7 @@ export class FirestoreRepository<T> implements IRepository<any> {
 					reject(error)
 				})
 		})
-	}
+	};
 
 	getDocument<T>(documentId: string): Promise<T> {
 		return new Promise<T>((resolve, reject) => {
@@ -51,10 +51,10 @@ export class FirestoreRepository<T> implements IRepository<any> {
 					reject(error)
 				})
 		})
-	}
+	};
 	getDocumentsByField<T>(...query: any[]): Promise<T[]> {
 		throw new Error('Method not implemented.')
-	}
+	};
 
 	/**
 	 *
@@ -73,7 +73,7 @@ export class FirestoreRepository<T> implements IRepository<any> {
 					reject(error)
 				})
 		})
-	}
+	};
 	addDocumentById(documentId: string, document: T): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.db
@@ -124,8 +124,8 @@ export class FirestoreRepository<T> implements IRepository<any> {
 
 	deleteCollection(collectionName: string): Promise<boolean> {
 		throw new Error('Method not implemented.')
-	}
+	};
 	addToCollection(collectionName: string, document: any): Promise<void> {
 		throw new Error('Method not implemented.')
-	}
+	};
 }

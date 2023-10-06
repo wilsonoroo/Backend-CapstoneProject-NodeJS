@@ -1,6 +1,6 @@
-export interface ICuadrilla <INTEGRANTE> {
+export interface ICuadrilla <Integrante> {
     id: string;
     nombre: string;
-    validadores: INTEGRANTE
-    integrantes: INTEGRANTE
+    validadores: Integrante;
+    integrantes: Integrante
 }

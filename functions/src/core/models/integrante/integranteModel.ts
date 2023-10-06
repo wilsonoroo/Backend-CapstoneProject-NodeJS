@@ -1,6 +1,6 @@
 import { IIntegrante } from "../../interface";
 
-export class integrante implements IIntegrante<string>{
+export class Integrante implements IIntegrante<string>{
     id: string;
     rut: string;
     cargo: string;

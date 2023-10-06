@@ -1,22 +1,28 @@
-export interface IDocumento<AUTH, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
-	id: string
-	encabezado: ENCABEZADO
-	seccionesRespuestas: SECCIONRESP
-	emisor: AUTH
-	seccionesRespuestasValidacion: SECCIONRESP
-	seccionesRespuestasChildren: SECCIONRESP
-	fechaCreacion: Date
-	fechaSubida?: Date //posiblemente no
-	fechaValidacion?: Date //posiblemente no
-	estado: string
-	isPlanDeAccion: boolean
-	respuestasMalas: RESPUESTA
-	checklist: CHECKLIST
-	pdf?: any //--> preguntar
-	vistos?: any // que tipo de dato es el vistos  -->preguntar
-	checklistChildren: CHECKLIST
-	respuestasMalasChildren: RESPUESTA
-	dobleValidadorPor: AUTH
-
-	//metodo para verificar emisor retorna un booleano
+export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
+    id: string;
+    checklist: CHECKLIST;
+    checklistChildren: CHECKLIST;
+    correlativo?: string;
+    cuadrilla?: CUADRILLA; 
+    emisor: AUTH;
+    encabezado: ENCABEZADO;
+    estado: string;
+    fechaCreacion: Date;
+    fechaSubida?: Date; //posiblemente no
+    fechaValidacion?: Date; //posiblemente no
+    fechaValidacionDobleChequeo?: Date;
+    isAutoValidacion?: boolean;
+    isConCuadrilla?: boolean;
+    isParticipantesCruzados?: boolean;
+    isPlanDeAccion: boolean;
+    pdf?: any; //--> preguntar
+    respuestasMalas: RESPUESTA;
+    respuestasMalasChildren: RESPUESTA;
+    seccionesRespuestas: SECCIONRESP;
+    seccionesRespuestasChildren: SECCIONRESP;
+    seccionesRespuestasValidacion: SECCIONRESP;
+    validadPor?: AUTH;
+    validadoDobleChequeoPor?: AUTH;
+    vistos?: any;
+    //metodo para verificar emisor retorna un booleano
 }

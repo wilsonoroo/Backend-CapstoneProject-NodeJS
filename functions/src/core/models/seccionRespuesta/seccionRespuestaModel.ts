@@ -1,8 +1,7 @@
 import {ISeccionRespuesta} from '../../interface'
-
 import {Fotografia} from '../fotografia'
-import {RespuestaModel} from '../respuesta'
-export class SeccionRespuesta implements ISeccionRespuesta<RespuestaModel, Fotografia> {
+import {Respuesta} from '../respuesta'
+export class SeccionRespuesta implements ISeccionRespuesta<Respuesta, Fotografia> {
 	id: string
 	nombre: string
 	index: number
@@ -10,6 +9,6 @@ export class SeccionRespuesta implements ISeccionRespuesta<RespuestaModel, Fotog
 	instruccion: string
 	isPaginate: boolean
 	cantidad: number
-	respuestas: RespuestaModel
+	respuestas: Respuesta
 	imagenReferencia: Fotografia
 }

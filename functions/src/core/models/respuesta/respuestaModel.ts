@@ -1,6 +1,6 @@
 import {IRespuesta} from '../../interface'
 
-export class RespuestaModel implements IRespuesta<any> {
+export class Respuesta implements IRespuesta<any> {
 	id: string
 	contenido: string
 	titulo: string

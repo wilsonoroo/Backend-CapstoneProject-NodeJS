@@ -118,12 +118,12 @@ export const agregarColeccion = onRequest(async (request: Request, response: Res
         response.status(500).send('Hubo un error al agregar el documento o las respuestas malas');
     }
 });
-function crearDoc(): Documento {
+export function crearDoc(): Documento {
 	const user = new User();
 	user.id = 'idUsuarios';
 	user.email = 'idUsuarios@gmail.com';
 	const doc = new Documento();
-	doc.id = 'd1';
+	doc.id = 'd7';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = true;

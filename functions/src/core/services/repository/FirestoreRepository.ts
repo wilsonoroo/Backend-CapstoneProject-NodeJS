@@ -74,6 +74,10 @@ export class FirestoreRepository<T> implements IRepository<any> {
 				})
 		})
 	};
+	setReference(newReference: string):string{
+		this.reference = newReference;
+		return this.reference
+	}
 	addDocumentById(documentId: string, document: T): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.db

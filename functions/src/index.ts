@@ -10,6 +10,7 @@ import {
 	actualizarFlujo,
 	flujoGeneracionDocumentos,
 	agregarColeccion,
+	generarDoc,
 } from './functions'
 // export const actualizar= updatear;
 export const salu2 = helloWorld;
@@ -24,3 +25,4 @@ export const flujo = flujoGeneracionDocumentos;
 //}export const escucharFlujo = escuchandoFlujo;
 export const escucharFluj2o = actualizarFlujo;
 export const agregarColeccion2 = agregarColeccion;
+export const actualizarRef = generarDoc;

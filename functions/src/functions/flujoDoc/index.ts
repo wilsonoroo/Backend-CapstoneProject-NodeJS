@@ -7,6 +7,7 @@ import * as functions from "firebase-functions";
 import {Documento,} from '../../core/models'
 import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository'
 import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
+import { crearDoc } from '../helloWord';
 const documentID = 'doc1'
 export const flujoGeneracionDocumentos = onRequest(async(request: Request, response: Response) => {
     const rutaDoc = '/documentos';
@@ -193,7 +194,7 @@ function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento):
     const isProblema = true;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
-    //como saber si mi doc tiene problemas 
+    //como saber si mi doc tiene problemas
     if (estadoActual === "finalizado" || estadoActual  === "validado") {
         if(isProblema){
             doc.pdf =EnkiCreator.generarPDF(doc)
@@ -237,3 +238,47 @@ function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento):
     });
     return doc.estado;
 }
+
+
+
+export const generarDoc =onRequest(async (request: Request, response: Response) => {
+    const rutaDoc = '/documentos';
+    const repo = new FirestoreRepository<Documento>(rutaDoc);
+    const doc2 = crearDoc();
+	//pasarle un set al repo 
+
+    try {
+        await repo.addDocumentById(doc2.id, JSON.parse(JSON.stringify(doc2)));
+        console.log("Se agregó el documento de manera correcta dentro de la bd");
+
+        for (let respuestaMala of doc2.respuestasMalas) {
+            let rutaAux = rutaDoc+"/"+ doc2.id+"/RespuestasMalas";
+            repo.setReference(rutaAux)
+
+            try {
+                await repo.addDocumentById(respuestaMala.id, JSON.parse(JSON.stringify(respuestaMala)));
+                console.log("RespmalasAgregadas", respuestaMala.id);
+
+                for (let respuestaMalaChildren of doc2.respuestasMalasChildren) {
+                     rutaAux = rutaDoc+"/"+ doc2.id+"/RespuestasMalas/"+respuestaMala.id+"/RespuestasMalasChildren";
+                    repo.setReference(rutaAux)
+                    try {
+                        await repo.addDocumentById(respuestaMalaChildren.id, JSON.parse(JSON.stringify(respuestaMalaChildren)));
+                        console.log("Children Agrega2", respuestaMalaChildren.id);        
+                    } catch (error) {
+                        console.error("Error agregando respuestaMalaChildren:", error);
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error agregando respuestaMala:", error);
+            }
+        }
+       
+
+        response.send('Se agregó el documento y las respuestas malas correctamente');
+    } catch (error) {
+        console.error(error);
+        response.status(500).send('Hubo un error al agregar el documento o las respuestas malas');
+    }
+});

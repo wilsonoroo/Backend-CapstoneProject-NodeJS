@@ -8,6 +8,7 @@ interface IRepository<T> {
 	// Metodos asociados la agregar datos
 	addDocument<T>(document: T): Promise<void>
 	addDocumentById(documentId: string, document: any): Promise<any>
+	setReference(newReference: string):string;
 
 	// Metodos asociados la update datos
 	updateDocument<T>(documentId: string, document: T): Promise<void>

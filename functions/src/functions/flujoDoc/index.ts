@@ -185,18 +185,19 @@ export const flujoNuevoPDF = functions.firestore
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc = await repo.getDocument<Documento>(context.params.docId);
-    const info = actualizarNuevoPDF(repo,doc);
+    const docAnterior = change.before.data() as Documento;
+    console.log("estado anterior", docAnterior)
+    const info = actualizarNuevoPDF(repo,doc,docAnterior.estado);
     console.log("info:",info);
 
 });
-function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento): string {
+function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento,estadoAnterior:string): string {
     const estadoActual = doc.estado;
-    const isProblema = true;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
     //como saber si mi doc tiene problemas
     if (estadoActual === "finalizado" || estadoActual  === "validado") {
-        if(isProblema){
+        if(estadoAnterior == "documento_con_problema"||estadoAnterior == "documento_sin_problema"){
             doc.pdf =EnkiCreator.generarPDF(doc)
             console.log(`el documento generado ya se valido  ${doc.emisor.email}`)
             if (isPlanDeAccion){
@@ -210,8 +211,14 @@ function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento):
                     doc.estado = "finalizado"
                 }
             }
-
         }
+        repo.updateDocumentParcial<Documento>(doc.id,JSON.parse(JSON.stringify(doc))).then((doc) => {
+            console.log('ACTUALIZANDO EN LA BD de nuevo pdf')        
+        }).catch((error) => {
+            console.error(error)
+        });
+        return doc.estado;
+
     }
     else{ 
         if (estadoActual === "rechazado") {
@@ -230,13 +237,14 @@ function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento):
                 }  
             }
         }
+        repo.updateDocumentParcial<Documento>(doc.id,JSON.parse(JSON.stringify(doc))).then((doc) => {
+            console.log('ACTUALIZANDO EN LA BD de nuevo pdf')        
+        }).catch((error) => {
+            console.error(error)
+        });
+        return doc.estado;
     }
-    repo.updateDocumentParcial<Documento>(doc.id,JSON.parse(JSON.stringify(doc))).then((doc) => {
-        console.log('ACTUALIZANDO EN LA BD')        
-    }).catch((error) => {
-        console.error(error)
-    });
-    return doc.estado;
+
 }
 
 
@@ -245,10 +253,14 @@ export const generarDoc =onRequest(async (request: Request, response: Response) 
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc2 = crearDoc();
+    let docAux: Partial<Documento> = { ...doc2 };//buscando forma de eliminar y no exista duplicidad
+    delete docAux.respuestasMalas;
+    delete docAux.respuestasMalasChildren;
+    
 	//pasarle un set al repo 
 
     try {
-        await repo.addDocumentById(doc2.id, JSON.parse(JSON.stringify(doc2)));
+        await repo.addDocumentById(doc2.id, JSON.parse(JSON.stringify(docAux)));
         console.log("Se agregó el documento de manera correcta dentro de la bd");
 
         for (let respuestaMala of doc2.respuestasMalas) {

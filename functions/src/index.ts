@@ -1,16 +1,17 @@
 import {
-	agregando,
+	// agregando,
 	// listener2,
 	// onCreateNewDocument2,
 	// funcionTesting1,
-	deleteando,
+	// deleteando,
 	// updatear,
 	helloWorld,
-	updata2,
-	actualizarFlujo,
-	flujoGeneracionDocumentos,
-	agregarColeccion,
+	// updata2,
+	// actualizarFlujo,
+	// flujoGeneracionDocumentos,
+	// agregarColeccion,
 	generarDoc,
+	flujoNuevoPDF,
 } from './functions'
 // export const actualizar= updatear;
 export const salu2 = helloWorld;
@@ -18,11 +19,12 @@ export const salu2 = helloWorld;
 // export const escuchandoDoc = onCreateNewDocument2;
 // export const funcionAbstracta= funcionTesting1;
 //export const funcionTest1= FuncionListener;
-export const actualizan2 = updata2;
-export const agregan2 = agregando;
-export const borrar= deleteando;
-export const flujo = flujoGeneracionDocumentos;
-//}export const escucharFlujo = escuchandoFlujo;
-export const escucharFluj2o = actualizarFlujo;
-export const agregarColeccion2 = agregarColeccion;
-export const actualizarRef = generarDoc;
+// export const actualizan2 = updata2;
+// export const agregan2 = agregando;
+// export const borrar= deleteando;
+// export const flujo = flujoGeneracionDocumentos;
+// //}export const escucharFlujo = escuchandoFlujo;
+// export const escucharFluj2o = actualizarFlujo;
+// export const agregarColeccion2 = agregarColeccion;
+export const generaDocumentoNuevo = generarDoc;//genera Doc
+export const flujoN = flujoNuevoPDF;//flujo para cuando se actualiza un documento

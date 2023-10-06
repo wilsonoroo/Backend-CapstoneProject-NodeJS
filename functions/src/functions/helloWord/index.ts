@@ -128,7 +128,7 @@ export function crearDoc(): Documento {
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = true;
 	doc.emisor = user;
-	doc.estado = 'generado';
+	doc.estado = 'doc_con_problema';
 	doc.respuestasMalas = [];
 	doc.respuestasMalasChildren = [];
 	const checklist = new Checklist();
@@ -137,7 +137,7 @@ export function crearDoc(): Documento {
 	checklist.descripcion = 'descripcionChecklist';
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
-	configuracion.needValidacion = true;
+	configuracion.needValidacion = false;
 	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;

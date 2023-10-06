@@ -102,14 +102,7 @@ export const agregarColeccion = onRequest(async (request: Request, response: Res
         console.log("Se agregó el documento de manera correcta dentro de la bd");
 
         for (let respuestaMala of doc2.respuestasMalas) {
-            try {
-                await repo.addToCollectionById("RespuestaMalas", JSON.parse(JSON.stringify(respuestaMala)), doc2.id, respuestaMala.id);
-                console.log("Se agregó la colección dentro del documento en el for", respuestaMala.id);
-				//documentos/id/respuestasMalas/id/RespuestaMalaChildren/id
-
-            } catch (error) {
-                console.error("Error agregando respuestaMala:", error);
-            }
+          console.log(respuestaMala);
         }
 
         response.send('Se agregó el documento y las respuestas malas correctamente');

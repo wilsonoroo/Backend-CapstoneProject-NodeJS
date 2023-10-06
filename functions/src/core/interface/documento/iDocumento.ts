@@ -15,9 +15,9 @@ export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, 
 	isConCuadrilla?: boolean;
 	isParticipantesCruzados?: boolean;
 	isPlanDeAccion: boolean;
-	pdf?: any; //--> preguntar
+	pdf?: any; //--> preguntar //es de tipo archivo
 	respuestasMalas: RESPUESTA[];
-	respuestasMalasChildren: RESPUESTA;
+	respuestasMalasChildren: RESPUESTA[];
 	seccionesRespuestas: SECCIONRESP;
 	seccionesRespuestasChildren: SECCIONRESP;
 	seccionesRespuestasValidacion: SECCIONRESP;

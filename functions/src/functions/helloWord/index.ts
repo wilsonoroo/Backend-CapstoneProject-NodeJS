@@ -4,7 +4,7 @@ import {onRequest} from 'firebase-functions/v2/https'
 //const {getFirestore} = require("firebase-admin/firestore");
 import {Request, Response} from 'firebase-functions'
 
-import {Documento, User, Respuesta} from '../../core/models'
+import {Documento, User, Respuesta,Checklist,ConfiguracionChecklist} from '../../core/models'
 import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository'
 
 export const helloWorld = onRequest((request: Request, response: Response) => {
@@ -92,38 +92,31 @@ export const agregando = onRequest((request: Request, response: Response) => {
 
 })
 
-export const agregarColeccion = onRequest((request: Request, response: Response) => {
-	const repo = new FirestoreRepository<Documento>('/documentos')
-	const doc2 = crearDoc();
-	repo.addDocumentById(doc2.id,JSON.parse(JSON.stringify(doc2))).then((doc)=> {
-        response.send('sea agrego el documento')
-		console.log("Se agrego el documento de manera correcta dentro de la bd")
-    }).catch((error) => {
-        console.error(error)});
-	doc2.respuestasMalas.forEach(async respuestaMala => {
-		await repo.addToCollectionById("RespuestaMala",JSON.parse(JSON.stringify(respuestaMala)),doc2.id,respuestaMala.id)
-		.then(() => 
-		// response.send('se agrego la coleccion dentro del documento la respuesta mala 2')
-		console.log("se agrego la coleccion dentro del documento en el for",respuestaMala.id)
-		).catch((error) => {
-			console.error(error)
-		});
-	});
+export const agregarColeccion = onRequest(async (request: Request, response: Response) => {
+    const repo = new FirestoreRepository<Documento>('/documentos');
+    const doc2 = crearDoc();
+	//pasarle un set al repo 
 
-	// repo.addToCollection("RespuestasMalas",JSON.parse(JSON.stringify(user)),"doc2")
-	// .then(()=> {
-	// 	response.send('nueva coleccion ok!!')
-	// }).catch((error) => {
-	// 	console.error(error)
-	// })
-	// const RespuestasBuenas = new SeccionPregunta();
-	// RespuestasBuenas.id = 'p1';
-	// RespuestasBuenas.nombre = 'Nublado';
-	// RespuestasBuenas.titulo = '¿Esta nublaado?';
+    try {
+        await repo.addDocumentById(doc2.id, JSON.parse(JSON.stringify(doc2)));
+        console.log("Se agregó el documento de manera correcta dentro de la bd");
 
-	// repo.addToCollectionById("RespuestasBuenas",JSON.parse(JSON.stringify(RespuestasBuenas)),"doc2",RespuestasBuenas.id); //
-	
+        for (let respuestaMala of doc2.respuestasMalas) {
+            try {
+                await repo.addToCollectionById("RespuestaMalas", JSON.parse(JSON.stringify(respuestaMala)), doc2.id, respuestaMala.id);
+                console.log("Se agregó la colección dentro del documento en el for", respuestaMala.id);
+				//documentos/id/respuestasMalas/id/RespuestaMalaChildren/id
 
+            } catch (error) {
+                console.error("Error agregando respuestaMala:", error);
+            }
+        }
+
+        response.send('Se agregó el documento y las respuestas malas correctamente');
+    } catch (error) {
+        console.error(error);
+        response.status(500).send('Hubo un error al agregar el documento o las respuestas malas');
+    }
 });
 function crearDoc(): Documento {
 	const user = new User();
@@ -137,6 +130,19 @@ function crearDoc(): Documento {
 	doc.emisor = user;
 	doc.estado = 'generado';
 	doc.respuestasMalas = [];
+	doc.respuestasMalasChildren = [];
+	const checklist = new Checklist();
+	checklist.id = 'idChecklist';
+	checklist.nombre = 'nombreChecklist';
+	checklist.descripcion = 'descripcionChecklist';
+	checklist.faena = 'faenaChecklist';
+	const configuracion = new ConfiguracionChecklist();
+	configuracion.needValidacion = true;
+	configuracion.needPlanDeAccion = true;
+	configuracion.validacionGlobal = true;
+	configuracion.cantidadMaximaFotos = 10;
+	checklist.configuracion = configuracion;	
+	doc.checklist = checklist;
 	const respuesta1 = new Respuesta();
 	respuesta1.id = 'r1';
 	respuesta1.contenido = 'contenido1';
@@ -152,6 +158,19 @@ function crearDoc(): Documento {
 	respuesta3.contenido = 'contenido3';
 	respuesta3.titulo = 'titulo3';
 	respuesta3.tipo = 'tipo3';
+	const respuestaC1 = new Respuesta();
+	respuestaC1.id = 'rChiquita1';
+	respuestaC1.contenido = 'contenidoChito1';
+	respuestaC1.titulo = 'tituloChiquito1';
+	respuestaC1.tipo = 'tipoChiquito1';
+	const respuestaC2 = new Respuesta();
+	respuestaC2.id = 'rChiquita2';
+	respuestaC2.contenido = 'contenidoChito2';
+	respuestaC2.titulo = 'tituloChiquito2';
+	respuestaC2.tipo = 'tipoChiquito2';
 	doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
+	doc.respuestasMalasChildren.push(respuestaC1,respuestaC2);
+	
+	
 	return doc
 }

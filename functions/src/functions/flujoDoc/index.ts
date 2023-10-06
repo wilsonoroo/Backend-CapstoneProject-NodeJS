@@ -6,6 +6,7 @@ import * as functions from "firebase-functions";
 
 import {Documento,} from '../../core/models'
 import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository'
+import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
 const documentID = 'doc1'
 export const flujoGeneracionDocumentos = onRequest(async(request: Request, response: Response) => {
     const rutaDoc = '/documentos';
@@ -144,7 +145,10 @@ function actualizar(repo: FirestoreRepository<Documento>,doc:Documento): string 
     if (!doc.isAutoValidado) {
         //no necesita validacion
         //generarPDF --> servicio
-        //Enviar notificacion a doc.emisor.email --> servicio
+
+        doc.pdf =EnkiCreator.generarPDF(doc)
+        //Enviar notificacion a doc.emisor.email --> servicio 
+        //para enviar la notificacion es sacar el token
         console.log(`documento fue validado y enviado a  ${doc.emisor.email}`)
         // cambiar estado a 'validado'
         doc.estado = 'validado';
@@ -163,6 +167,67 @@ function actualizar(repo: FirestoreRepository<Documento>,doc:Documento): string 
         else {
             doc.estado = 'doc_sin_problemas';
             console.log(`documento con estado ${doc.estado} enviando a ${doc.emisor.email}`)
+        }
+    }
+    repo.updateDocumentParcial<Documento>(doc.id,JSON.parse(JSON.stringify(doc))).then((doc) => {
+        console.log('ACTUALIZANDO EN LA BD')        
+    }).catch((error) => {
+        console.error(error)
+    });
+    return doc.estado;
+}
+
+
+export const flujoNuevoPDF = functions.firestore
+.document('/documentos/{docId}')
+.onUpdate(async (change, context) => {
+    const rutaDoc = '/documentos';
+    const repo = new FirestoreRepository<Documento>(rutaDoc);
+    const doc = await repo.getDocument<Documento>(context.params.docId);
+    const info = actualizarNuevoPDF(repo,doc);
+    console.log("info:",info);
+
+});
+function actualizarNuevoPDF(repo: FirestoreRepository<Documento>,doc:Documento): string {
+    const estadoActual = doc.estado;
+    const isProblema = true;
+    const isPlanDeAccion = doc.isPlanDeAccion;
+    const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
+    //como saber si mi doc tiene problemas 
+    if (estadoActual === "finalizado" || estadoActual  === "validado") {
+        if(isProblema){
+            doc.pdf =EnkiCreator.generarPDF(doc)
+            console.log(`el documento generado ya se valido  ${doc.emisor.email}`)
+            if (isPlanDeAccion){
+                doc.estado = "finalizado"
+            }
+            else{
+                if(needPlandeAccion){
+                    doc.estado = "finalizado_sin_plan_accion"
+                }
+                else{
+                    doc.estado = "finalizado"
+                }
+            }
+
+        }
+    }
+    else{ 
+        if (estadoActual === "rechazado") {
+            console.log(`el checklist ha sido rechazado `)
+            if (isPlanDeAccion){
+                doc.estado = "rechazado"
+            }
+            else{
+                if(needPlandeAccion){
+                    doc.estado = "rechazado_sin_plan_accion"
+                }
+                else{
+                    doc.estado = "rechazado"
+                    doc.pdf =EnkiCreator.generarPDF(doc)
+                    //enviar noti de rechazaso
+                }  
+            }
         }
     }
     repo.updateDocumentParcial<Documento>(doc.id,JSON.parse(JSON.stringify(doc))).then((doc) => {

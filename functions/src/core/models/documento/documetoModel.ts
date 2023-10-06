@@ -25,7 +25,7 @@ export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabeza
 	isPlanDeAccion: boolean;
 	pdf?: any; //--> preguntar
 	respuestasMalas: Respuesta[];
-	respuestasMalasChildren: Respuesta; //-->
+	respuestasMalasChildren: Respuesta[]; //-->
 	seccionesRespuestas: SeccionRespuesta;
 	seccionesRespuestasChildren: SeccionRespuesta;
 	seccionesRespuestasValidacion: SeccionRespuesta;

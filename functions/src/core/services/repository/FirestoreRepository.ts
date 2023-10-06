@@ -127,10 +127,9 @@ export class FirestoreRepository<T> implements IRepository<any> {
 	};
 	addToCollection(collectionName: string, document: any,id:string): Promise<void> {
 		return new Promise((resolve, reject) => {
+			let ruta = this.reference + '/' + id + '/' + collectionName;
 			this.db
-				.collection(this.reference)
-				.doc(id)
-				.collection(collectionName)
+				.collection(ruta)
 				.add(document as any)
 				.then(() => {
 					resolve();
@@ -166,5 +165,6 @@ export class FirestoreRepository<T> implements IRepository<any> {
 					reject(error);
 				});
 		});
+		//para 2 niveles aprox
 	}
 }

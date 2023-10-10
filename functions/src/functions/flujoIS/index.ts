@@ -5,7 +5,7 @@ import {Documento} from '../../core/models';
 
 
 import { todosHanFirmado } from './verificador';  
-import NotificationService from './enviarNotificacion';
+import NotificationService from './notificacionFCM';
 
 export const id = "doc";
 
@@ -123,7 +123,7 @@ export const flujo3 = functions.https.onRequest(async (request: Request, respons
         repo.updateDocument(id, {estado: "rechazado"});
     } else {
         console.log("NOTIFICAR A LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR.");
-        // Aquí también podrías agregar lógica para notificar a los usuarios del documento si lo necesitas
+        // Aquí también agregar lógica para notificar 
         response.send("No todos los trabajadores han firmado.");
     }
 });

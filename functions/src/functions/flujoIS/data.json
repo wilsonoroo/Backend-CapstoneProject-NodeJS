@@ -1,0 +1,37 @@
+{
+    "id": "d1",
+    "isConCuadrilla": true,
+    "isAutoValidado": true,
+    "isPlanDeAccion": true,
+    "emisor": {
+      "id": "idUsuarios",
+      "email": "idUsuarios@gmail.com"
+    },
+    "estado": "generado",
+    "cuadrilla": {
+      "cuadrillitaOP": {
+        "nombre": "cuadrillitaOP",
+        "integrantes": {
+          "w": {
+            "nombre": "w",
+            "isFirmado": false
+          },
+          "M": {
+            "nombre": "M",
+            "isFirmado": true
+          }
+        },
+        "validadores": {
+          "L": {
+            "nombre": "L",
+            "isFirmado": true
+          },
+          "J": {
+            "nombre": "J",
+            "isFirmado": false
+          }
+        }
+      }
+    }
+  }
+  

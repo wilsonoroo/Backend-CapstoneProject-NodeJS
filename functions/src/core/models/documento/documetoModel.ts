@@ -11,7 +11,7 @@ export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabeza
     checklist: Checklist;
     checklistChildren: Checklist;
     correlativo?: string;
-    cuadrilla?: Cuadrilla; 
+    cuadrilla?: Cuadrilla;
     emisor: User;
     encabezado: Encabezado;
     estado: string;
@@ -32,5 +32,6 @@ export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabeza
     validadPor?: User;
     validadoDobleChequeoPor?: User;
     vistos?: any;
+    doc: Map<any, any>
     
 }

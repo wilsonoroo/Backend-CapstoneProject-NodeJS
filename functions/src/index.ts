@@ -1,5 +1,7 @@
 import {
-	flujo3,
+	flujo3, 
+	// flujoFF,
+	myfunction,
 	// listener2,
 	// onCreateNewDocument2,
 	// funcionTesting1,
@@ -9,6 +11,7 @@ import {
 	// flujo, 
 	// flujo1, 
 } from './functions'
+import {  generarDoc } from './functions/flujoIS/createDoc';
 
 // export const actualizar= updatear;
 // export const salu2 = helloWorld
@@ -24,3 +27,6 @@ import {
 // export const salve = flujo1;
 
 export const notification = flujo3;
+export const s = generarDoc;
+
+export const is2 = myfunction;

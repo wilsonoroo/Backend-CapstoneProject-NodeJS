@@ -1,9 +1,9 @@
-export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
+export interface IDocumento<AUTH,Cuadrilla, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
     id: string;
     checklist: CHECKLIST;
     checklistChildren: CHECKLIST;
     correlativo?: string;
-    cuadrilla?: CUADRILLA; 
+    cuadrilla?: Cuadrilla;
     emisor: AUTH;
     encabezado: ENCABEZADO;
     estado: string;

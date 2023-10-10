@@ -1,7 +1,4 @@
-// type Trabajador = {
-//     isFirmado: boolean;
-//     [key: string]: any;
-// };
+
 
 import { Cuadrilla, Integrante } from "../../core/models";
 
@@ -10,3 +7,4 @@ export function todosHanFirmado(cuadrilla: Cuadrilla): boolean {
     const integrantes = Object.values(cuadrilla.integrantes);
     return integrantes.every((integrante: Integrante) => integrante.isFirmado === true);
 }
+

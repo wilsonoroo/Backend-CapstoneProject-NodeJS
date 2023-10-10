@@ -92,24 +92,21 @@ export class FirestoreRepository<T> implements IRepository<any> {
 				})
 		})
 	}
-	updateDocument<T>(documentId: string, document: T): Promise<void> {
-		throw new Error('Method not implemented.')
-	}
-	updateDocumentParcial<T>(documentId: string, documentPartial: any): Promise<void> {
-		return new Promise((resolve, reject) => {
-			this.db
-			.collection(this.reference)
-			.doc(documentId)
-			.update(documentPartial as any)
-			.then(() => {
-				resolve()
-			})
-			.catch((error) => {
-				reject(error)
-			});
-		})
-	}
-
+	updateDocument(documentId: string, document: T): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.db
+                .collection(this.reference)
+                .doc(documentId)
+                .update(document as any)
+                .then(() => {
+                    resolve()
+                })
+                .catch((error) => {
+                    console.error('Error al actualizar el documento:', error)
+                    reject(error)
+                })
+        })
+    }
 
 	deleteDocument<T>(documentId: string): Promise<void> {
 		return new Promise((resolve, reject) => {	

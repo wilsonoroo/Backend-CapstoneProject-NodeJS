@@ -11,8 +11,7 @@ interface IRepository<T> {
 	setReference(newReference: string):string;
 
 	// Metodos asociados la update datos
-	updateDocument<T>(documentId: string, document: T): Promise<void>
-	updateDocumentParcial<T>(documentId: string, documentPartial: any): Promise<void>
+	updateDocument(documentId: string, document: T): Promise<void>
 
 	// Metodo para eliminar un documento
 	deleteDocument(documentId: string): Promise<void>

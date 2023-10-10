@@ -1,11 +1,12 @@
 import { IUsuario } from "../../interface/usuario";
+import { Dispositivo } from "../dispositivo";
 import { Enrolamiento } from "../enrolamiento";
 import { Fotografia } from "../fotografia";
 import { Licencia } from "../licencia";
 import { PermisosModel, PermisosWeb } from "../permiso";
 
 
-export class User implements IUsuario<Enrolamiento, Licencia, Fotografia, PermisosWeb, PermisosModel> {
+export class User implements IUsuario<Enrolamiento, Licencia, Fotografia, PermisosWeb, PermisosModel, Dispositivo> {
   id: string;
   email!: string;
   empresaId!: string;
@@ -33,6 +34,7 @@ export class User implements IUsuario<Enrolamiento, Licencia, Fotografia, Permis
   permisos!: PermisosModel;
   tipo!: string;  
   turno!: string;
+  dispositivos: Dispositivo;
 
 
 }

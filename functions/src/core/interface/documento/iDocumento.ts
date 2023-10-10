@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
 	id: string;
 	checklist: CHECKLIST;
@@ -26,3 +27,33 @@ export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, 
 	vistos?: any;
 	//metodo para verificar emisor retorna un booleano
 }
+=======
+export interface IDocumento<AUTH,Cuadrilla, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
+    id: string;
+    checklist: CHECKLIST;
+    checklistChildren: CHECKLIST;
+    correlativo?: string;
+    cuadrilla?: Cuadrilla;
+    emisor: AUTH;
+    encabezado: ENCABEZADO;
+    estado: string;
+    fechaCreacion: Date;
+    fechaSubida?: Date; //posiblemente no
+    fechaValidacion?: Date; //posiblemente no
+    fechaValidacionDobleChequeo?: Date;
+    isAutoValidacion?: boolean;
+    isConCuadrilla?: boolean;
+    isParticipantesCruzados?: boolean;
+    isPlanDeAccion: boolean;
+    pdf?: any; //--> preguntar
+    respuestasMalas: RESPUESTA;
+    respuestasMalasChildren: RESPUESTA;
+    seccionesRespuestas: SECCIONRESP;
+    seccionesRespuestasChildren: SECCIONRESP;
+    seccionesRespuestasValidacion: SECCIONRESP;
+    validadPor?: AUTH;
+    validadoDobleChequeoPor?: AUTH;
+    vistos?: any;
+    //metodo para verificar emisor retorna un booleano
+}
+>>>>>>> origin/notificaciones

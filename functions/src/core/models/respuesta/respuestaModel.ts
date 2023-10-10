@@ -1,5 +1,4 @@
 import {IRespuesta} from '../../interface'
-
 export class Respuesta implements IRespuesta<any> {
 	id: string
 	contenido: string

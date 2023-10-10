@@ -1,5 +1,4 @@
 import {ISeccionRespuesta} from '../../interface'
-
 import {Fotografia} from '../fotografia'
 import {Respuesta} from '../respuesta'
 export class SeccionRespuesta implements ISeccionRespuesta<Respuesta, Fotografia> {

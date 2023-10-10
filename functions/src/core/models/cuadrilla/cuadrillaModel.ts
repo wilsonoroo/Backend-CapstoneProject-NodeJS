@@ -1,7 +1,9 @@
 import { ICuadrilla } from "../../interface";
-export class Cuadrilla implements ICuadrilla<string>{
+import { Integrante } from "../integrante";
+
+export class Cuadrilla implements ICuadrilla<Integrante>{
     id: string;
     nombre: string;
-    validadores: string;
-    integrantes: string;
+    validadores: Integrante;
+    integrantes: Integrante;
 }

@@ -1,6 +1,6 @@
 
 
-export interface IUsuario <Enrolamiento, Licencia, Fotografia, PermisosWeb, PermisosModel> {  
+export interface IUsuario <Enrolamiento, Licencia, Fotografia, PermisosWeb, PermisosModel, Dispositivo> {  
     id: string;   
     email: string;
     empresaId: string;
@@ -28,6 +28,7 @@ export interface IUsuario <Enrolamiento, Licencia, Fotografia, PermisosWeb, Perm
     permisos: PermisosModel;
     tipo: string;  
     turno: string;
+    dispositivos: Dispositivo;
 
 }
 

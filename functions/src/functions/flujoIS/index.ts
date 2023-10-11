@@ -12,37 +12,9 @@ import {
 
 import { todosHanFirmado } from './verificador';  
 import NotificationService from './notificacionFCM';
+// import { DistributedCounter } from './contadorDistribuido';
 
 export const id = "doc";
-
-// export const flujo = functions.https.onRequest(async (request: Request, response: Response) => {
-    
-//     const repo = new FirestoreRepository<Documento>('documentos');   
-//     const doc = await repo.getDocument<Documento>(id);
-
-    
-//     if (doc.cuadrilla && todosHanFirmado(doc.cuadrilla)) {
-//         if ( doc.estado == "generado" ){
-//             console.log("NOTIFICAR A LOS VALIDADORES QUE DEBEN FIRMAR LA IS ")
-//             repo.updateDocument(id, {estado: "pendiente_validar"} )
-//         }        
-//         response.send("Todos los trabajadores han firmado.");
-//         console.log(doc.cuadrilla)
-//     } else if ( doc.estado === "validado") {
-
-//         repo.updateDocument(id, {estado: "validado"} )
-
-//     } else if ( doc.estado === "rechazado" ) {
-
-//         repo.updateDocument(id, {estado: "rechazado"} )
-
-//     } else {        
-//         console.log("NOTIFICAR A LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR.");
-//         response.send("No todos los trabajadores han firmado.");
-//     }
-   
-
-// });
 
 
 
@@ -88,40 +60,63 @@ export const flujo3 = functions.https.onRequest(async (request: Request, respons
     }
 });
 
-// export const flujoFF = functions.firestore
-//     .document('documentos/{id}')
-//     .onWrite(async (change, context) => {
-//         // Si el documento fue eliminado, no hacer nada.
-//         if (!change.after.exists) {
-//             return null;
-//         }
 
-//         // Obtiene los datos del documento desde el snapshot after (ya que puede ser un update o create)
-//         const docData = change.after.data() as Documento;
-//         // Obtiene el ID del documento desde el contexto
-//         const docId = context.params.id;
-//         const repo = new FirestoreRepository<Documento>('documentos'); 
 
-//         if (docData.cuadrilla && todosHanFirmado(docData.cuadrilla)) {
-//             if (docData.estado == "generado") {
-//                 console.log("CUADRILLA DEL DOC : ", docData.cuadrilla)
-//                 console.log("NOTIFICAR A LOS VALIDADORES QUE DEBEN FIRMAR LA IS")
-//                 repo.updateDocument(docId, { estado: "pendiente_validar" })
-//             }
-//             console.log(docData.cuadrilla)
-//         } else if (docData.isAutoValidado === true) {
-//             repo.updateDocument(docId, { estado: "validado" })
-//         } else if (docData.isAutoValidado === false) {
-//             repo.updateDocument(docId, { estado: "rechazado" })
-//         } else {
-//             console.log("NOTIFICAR A LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR.");
-//         }
+export const myfunction1 = onDocumentWritten("documentos/{docId}", async(event) => {    
+    const snapshot = event.data;
+    if (!snapshot) {
+        console.log("No data associated with the event");
+        return;
+    }
+    const docId = event.params.docId;
+    const dataBefore = snapshot.before.data() as Documento;
+    const dataAfter = snapshot.after.data() as Documento;
 
-//         // Imprime el ID del documento
-//         console.log("ID del documento:", docId);
-//         // Imprime todos los datos del documento
-//         console.log("Datos del documento:", docData);
-//     });
+    console.log(docId)
+    console.log(dataBefore);
+    console.log(dataAfter)
+
+    const repo = new FirestoreRepository<Documento>('documentos'); 
+
+    if (dataAfter.cuadrilla && todosHanFirmado(dataAfter.cuadrilla)) {
+        if ( dataAfter.estado == "generado" ){
+         
+            repo.updateDocument(docId, {estado: "pendiente_validar"} )
+            // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
+            const tokens = Object.values(dataAfter.cuadrilla.validadores).map(validador => validador.codigo);
+            const mensaje = {
+                title: 'Validación requerida',
+                body: 'Debes firmar el documento IS.'
+            };
+
+            console.log("Tokens a los que se enviará la notificación:", tokens);  // Visualizar tokens
+            console.log("Mensaje de notificación:", mensaje);  // Visualizar mensaje
+
+            
+            await notificationService.sendNotificationMulticast(tokens, mensaje);
+
+            //SUBIR DOCUMENTOS A ENTIDAD DOCUMENTOS
+
+        }
+    } else if ( dataAfter.estado === "validado") {
+        console.log("CAMBIA FINALIZADO")
+        // repo.updateDocument(docId, {estado: "finalizado"} )
+        // GENERAR DOCUMENTO PDF CON ESTADO FINALIZADO
+        // NOTIFICAR A LOS USUARIOS
+
+    } else if (dataAfter.estado === "rechazado") {
+        console.log("sigue rechazado")
+        // GENERAR DOCUMENTO PDF CON ESTADO RECHAZADO
+        // NOTIFICAR A LOS USUARIOS
+
+    } else {        
+        // console.log("NOTIFICAR A LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR.");
+        // response.send("No todos los trabajadores han firmado.");
+    }
+    
+});
+
+
 
 export const myfunction = onDocumentWritten("documentos/{docId}", async(event) => {    
     const snapshot = event.data;
@@ -137,12 +132,15 @@ export const myfunction = onDocumentWritten("documentos/{docId}", async(event) =
     console.log(dataBefore);
     console.log(dataAfter)
 
+  
     const repo = new FirestoreRepository<Documento>('documentos'); 
-    // if (dataAfter.cuadrilla ) {
+
     if (dataAfter.cuadrilla && todosHanFirmado(dataAfter.cuadrilla)) {
-        if ( dataAfter.estado == "generado" ){
-            // console.log("CUADRILLA DEL DOC : ", dataAfter.cuadrilla)
-            // console.log("NOTIFICAR A LOS VALIDADORES QUE DEBEN FIRMAR LA IS  ")
+        // Aquí es donde verificas si todos han firmado en la cuadrilla
+
+        if (dataAfter.estado == "generado") {
+            // Si todos han firmado y el documento está en estado "generado"
+            
             repo.updateDocument(docId, {estado: "pendiente_validar"} )
             // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
             const tokens = Object.values(dataAfter.cuadrilla.validadores).map(validador => validador.codigo);
@@ -156,26 +154,25 @@ export const myfunction = onDocumentWritten("documentos/{docId}", async(event) =
 
             
             await notificationService.sendNotificationMulticast(tokens, mensaje);
-        }else{
-            console.log("GG")
-        } 
+            
+
+            
+        } else {
+            // Si todos han firmado, pero el documento NO está en estado "generado"
+            console.log("Todos han firmado, pero el documento no está en el estado 'generado'.");
+        }
         
-        console.log(dataAfter.cuadrilla)
-    } else if ( dataAfter.estado === "validado") {
-        console.log("sigue validado")
-        // repo.updateDocument(docId, {estado: "validado"} )
+    } else if (dataAfter.cuadrilla && !todosHanFirmado(dataAfter.cuadrilla)) {
+        // Aquí es donde verificas si NO todos han firmado en la cuadrilla
+        console.log("Faltan firmas en la cuadrilla.");
 
-    } else if (dataAfter.estado === "rechazado") {
-        console.log("sigue rechazado")
-        // repo.updateDocument(docId, {estado: "rechazado"} )
+    } if (dataAfter.estado === "validado") {
+        console.log("El documento ha sido validado.");
+        repo.updateDocument(docId, {estado: "finalizado"} )
+        
 
-    } else {        
-        // console.log("NOTIFICAR A LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR.");
-        // response.send("No todos los trabajadores han firmado.");
+    } if (dataAfter.estado === "rechazado") {
+        console.log("El documento ha sido rechazado.");
+
     }
-    console.log("faltan firmas")
-
-
-
 });
-

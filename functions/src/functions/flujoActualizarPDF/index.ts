@@ -9,6 +9,8 @@ import {Request, Response} from 'firebase-functions';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
 import * as fs from 'fs';
 
+const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
+const empresa = "VAKU";
 
 
 export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async(event) => {
@@ -22,16 +24,20 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
     const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
 
 
+
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
     const estadoAnterior =  docAnterior.estado;
-
+    let pdf ;
+    console.log("🚀 ~ file: index.ts:33 ~ FlujoActualizarPDF ~ pdf:", pdf)
 
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
         if(estadoAnterior === "documento_con_problema"||estadoAnterior === "documento_sin_problema"){
-            doc.pdf =EnkiCreator.generarPDF(doc)
+            pdf =EnkiCreator.generarPDF(doc)
+            // doc.pdf = Storage.saveFile(empresa,pdfData);
+
             console.log("EL DOCUMENTO YA SE VALIDO");
             
             const mensaje = {
@@ -78,7 +84,9 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
                     repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
                 }
                 else{
-                    doc.pdf =EnkiCreator.generarPDF(doc)
+                    //generar PDF luego Enviarlo a la Nube y generar el mensaje
+                    pdf =EnkiCreator.generarPDF(doc)
+                    // doc.pdf = Storage.saveFile(empresa,pdfData);
                     console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                     const mensaje = {
                         title: 'Aviso',
@@ -90,7 +98,9 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
                 }
             }
             else{
-                doc.pdf =EnkiCreator.generarPDF(doc)
+                // pdf =EnkiCreator.generarPDF(doc);
+                // doc.pdf = Storage.saveFile(empresa,pdfData);
+
                 console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                 const mensaje = {
                     title: 'Aviso',
@@ -212,17 +222,12 @@ export const generarDoc =onRequest(async (request: Request, response: Response) 
 });
 export const archivotest = onRequest(async (request: Request, response: Response) => {
 
-    const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
     try {
-        const empresa = "VAKU";
         Storage.saveFile(empresa,pdfData);
         console.log("ARCHIVO SUBIDO");
-        response.send("enviado");
-
-        //console.log("🚀 ~ file: index.ts:219 ~ archivotest ~ subido:", subido);
-        
+        response.send("enviado");        
     } catch (error) {
         console.error(error);
-        response.status(500).send('Hubo un error ');
+        response.status(500).send('Hubo un error');
     }
 });

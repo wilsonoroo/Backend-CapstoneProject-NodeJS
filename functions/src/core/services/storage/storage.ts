@@ -1,7 +1,6 @@
 import { Archivo } from "../../models/archivo"
 import admin from "firebase-admin";
-const { uuidv4 } = require("uuid");
-// import { uuidv4 } from "uuid";
+const { v4: uuidv4 } = require("uuid");
 
 export class Storage{
     private static id: string;
@@ -17,7 +16,7 @@ export class Storage{
      * @memberof Storage
      * Metodo para  guardar un archivo PDF en el almacenamiento en el Storage 
      * y devolver un objeto Archivo para almacenarlo en la base de datos.
-     */
+     */   
     static saveFile(empresa:string,pdf:any): Archivo{
         this.id =uuidv4();
         this.filePath = empresa + "/pdf/" + this.id;
@@ -37,6 +36,8 @@ export class Storage{
         file.save(pdf,options);
 
         const urlFile = "https://firebasestorage.googleapis.com/v0" + file.parent.baseUrl + "/" + file.metadata.bucket + file.baseUrl + "/" + empresa + "%2Fpdf%2F" + this.id + "?alt=media&token=" + this.token;
+        // console.log("🚀 ~ file: storage.ts:39 ~ Storage ~ saveFile ~ urlFile:", urlFile)
+        //a la url le falta vaku-dev.appspot.com --- esta entre la b y la o b/vaku-dev.appspot.com/o/
 
         let archivo = new Archivo();
         archivo.id= this.id;

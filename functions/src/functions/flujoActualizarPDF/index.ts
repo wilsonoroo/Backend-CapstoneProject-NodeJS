@@ -5,22 +5,39 @@ import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
 import { onDocumentUpdated,  } from "firebase-functions/v2/firestore";
 import {onRequest} from 'firebase-functions/v2/https'
 import {Request, Response} from 'firebase-functions'
+import NotificationService from '../../core/services/notificacion/notificacionFCM';
 
 export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async(event) => {
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc = event.data?.after.data() as Documento;
     const docAnterior = event.data?.before.data() as Documento;
+    const notificationService = new NotificationService();
+    console.log("🚀 ~ file: index.ts:16 ~ FlujoActualizarPDF ~ notificationService:", notificationService)
+
 
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
     const estadoAnterior =  docAnterior.estado;
+    const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
+
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
         if(estadoAnterior === "documento_con_problema"||estadoAnterior === "documento_sin_problema"){
             doc.pdf =EnkiCreator.generarPDF(doc)
-            console.log(`el documento generado ya se valido  ${doc.emisor.email}`)
+            console.log("EL DOCUMENTO YA SE VALIDO ");
+
+            // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
+            // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
+            
+            const mensaje = {
+                title: 'Aviso',
+                body: 'El documento ya se valido.'
+            };
+            await notificationService.sendNotificationMulticast(tokens, mensaje);
+
+
             if (isPlanDeAccion){
                 doc.estado = "finalizado"
                 repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
@@ -42,26 +59,46 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
         }
     }
     else{
-        if (estadoActual == "rechazado") {
-            console.log(`el checklist ha sido rechazado `)
-            if (isPlanDeAccion){
-                doc.estado = "rechazado";
-                repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+        if (estadoActual == "rechazado" && estadoAnterior !== "rechazado") {
+            console.log("EL CHECKLIST HA SIDO RECHAZADO");
 
-            }
-            else{
-                if(needPlandeAccion){
+            // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
+            // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
+            
+            const mensaje = {
+                title: 'Aviso',
+                body: 'El checklist ha sido rechazado'
+            };
+            await notificationService.sendNotificationMulticast(tokens, mensaje);
+
+
+            if (!isPlanDeAccion){
+                if (needPlandeAccion){
                     doc.estado = "rechazado_sin_plan_accion";
+                    repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+                }
+                else{
+                    doc.pdf =EnkiCreator.generarPDF(doc)
+                    console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
+                    const mensaje = {
+                        title: 'Aviso',
+                        body: 'El documento generado ha sido rechazado'
+                    };
+                    await notificationService.sendNotificationMulticast(tokens, mensaje);
                     repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
 
                 }
-                else{
-                    doc.estado = "rechazado";
-                    doc.pdf =EnkiCreator.generarPDF(doc);
-                    repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+            }
+            else{
+                doc.pdf =EnkiCreator.generarPDF(doc)
+                console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
+                const mensaje = {
+                    title: 'Aviso',
+                    body: '2 El documento generado ha sido rechazado'
+                };
+                await notificationService.sendNotificationMulticast(tokens, mensaje);
+                repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
 
-                    //enviar noti de rechazaso
-                }  
             }
         }
     }

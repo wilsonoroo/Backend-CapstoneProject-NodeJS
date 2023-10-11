@@ -1,10 +1,10 @@
 
-import {Documento, User, Respuesta,Checklist,ConfiguracionChecklist} from '../../core/models'
-import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository'
+import {Documento, User, Respuesta,Checklist,ConfiguracionChecklist} from '../../core/models';
+import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository';
 import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
 import { onDocumentUpdated,  } from "firebase-functions/v2/firestore";
-import {onRequest} from 'firebase-functions/v2/https'
-import {Request, Response} from 'firebase-functions'
+import {onRequest} from 'firebase-functions/v2/https';
+import {Request, Response} from 'firebase-functions';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
 
 export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async(event) => {
@@ -13,23 +13,22 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
     const doc = event.data?.after.data() as Documento;
     const docAnterior = event.data?.before.data() as Documento;
     const notificationService = new NotificationService();
-    console.log("🚀 ~ file: index.ts:16 ~ FlujoActualizarPDF ~ notificationService:", notificationService)
+    // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
+    // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
+    const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
 
 
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
     const estadoAnterior =  docAnterior.estado;
-    const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
+
 
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
         if(estadoAnterior === "documento_con_problema"||estadoAnterior === "documento_sin_problema"){
             doc.pdf =EnkiCreator.generarPDF(doc)
-            console.log("EL DOCUMENTO YA SE VALIDO ");
-
-            // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
-            // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
+            console.log("EL DOCUMENTO YA SE VALIDO");
             
             const mensaje = {
                 title: 'Aviso',
@@ -51,7 +50,6 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
                 }
                 else{
                     doc.estado = "finalizado"
-                    // repo.updateDocument(doc.id, {estado: "pendiente_validar"} )
                     repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
 
                 }
@@ -62,8 +60,6 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
         if (estadoActual == "rechazado" && estadoAnterior !== "rechazado") {
             console.log("EL CHECKLIST HA SIDO RECHAZADO");
 
-            // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
-            // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
             
             const mensaje = {
                 title: 'Aviso',
@@ -117,7 +113,7 @@ export function crearDoc(): Documento {
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = true;
 	doc.emisor = user;
-	doc.estado = 'documento_con_problema';
+	doc.estado = 'generado';
 	doc.respuestasMalas = [];
 	doc.respuestasMalasChildren = [];
 	const checklist = new Checklist();

@@ -2,6 +2,9 @@ import { Documento } from "../../models"
 import { Archivo } from "../../models/archivo"
 export class EnkiCreator{
     static generarPDF(doc:Documento): Archivo{
+        //subir pdf y retornalo 
+        
+        // de aqui abajo va al save file
         let archivo1 = new Archivo();
         archivo1.id="a1";
         archivo1.name="archivo1.pdf";

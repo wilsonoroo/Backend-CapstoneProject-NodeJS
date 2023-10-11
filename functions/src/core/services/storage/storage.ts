@@ -1,21 +1,27 @@
 import { Archivo } from "../../models/archivo"
 import admin from "firebase-admin";
-// const { v4: uuidv4 } = require("uuid");
+const { uuidv4 } = require("uuid");
+// import { uuidv4 } from "uuid";
 
-
-// interface IStorage {
-//     id: string;
-//     token: string;
-// }
 export class Storage{
     private static id: string;
     private static token: string;
     private static filePath: string;
-    //agregar atributos de id y de token 
+    /**
+     *
+     *
+     * @static
+     * @param {string} empresa
+     * @param {*} pdf
+     * @return {*}  {Archivo}
+     * @memberof Storage
+     * Metodo para  guardar un archivo PDF en el almacenamiento en el Storage 
+     * y devolver un objeto Archivo para almacenarlo en la base de datos.
+     */
     static saveFile(empresa:string,pdf:any): Archivo{
-        this.id ="token";
+        this.id =uuidv4();
         this.filePath = empresa + "/pdf/" + this.id;
-        this.token  = "token";
+        this.token  = uuidv4();
         const options = {
             metadata: {
               contentType: "application/pdf",

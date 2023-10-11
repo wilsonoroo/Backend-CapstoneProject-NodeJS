@@ -2,10 +2,14 @@
 import {Documento, User, Respuesta,Checklist,ConfiguracionChecklist} from '../../core/models';
 import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository';
 import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
+import { Storage } from '../../core/services/storage/storage';
 import { onDocumentUpdated,  } from "firebase-functions/v2/firestore";
 import {onRequest} from 'firebase-functions/v2/https';
 import {Request, Response} from 'firebase-functions';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
+import * as fs from 'fs';
+
+
 
 export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async(event) => {
     const rutaDoc = '/documentos';
@@ -204,5 +208,21 @@ export const generarDoc =onRequest(async (request: Request, response: Response) 
     } catch (error) {
         console.error(error);
         response.status(500).send('Hubo un error al agregar el documento o las respuestas malas');
+    }
+});
+export const archivotest = onRequest(async (request: Request, response: Response) => {
+
+    const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
+    try {
+        const empresa = "VAKU";
+        Storage.saveFile(empresa,pdfData);
+        console.log("ARCHIVO SUBIDO");
+        response.send("enviado");
+
+        //console.log("🚀 ~ file: index.ts:219 ~ archivotest ~ subido:", subido);
+        
+    } catch (error) {
+        console.error(error);
+        response.status(500).send('Hubo un error ');
     }
 });

@@ -15,7 +15,14 @@ export const GenerarDocumento = onDocumentCreated("/documentos/{docId}", async(e
 
     const needValidacion = doc.checklist.configuracion.needValidacion;
     const needPlanDeAccion = doc.checklist.configuracion.needPlanDeAccion;
-    let conProblemas = 0; //obtener el largo de la lista de respuestas malas o si existe almenos 1 
+    //transformar el mapa a un arreglo para mi estructura de datos
+    if (typeof doc.respuestasMalas === 'object' && doc.respuestasMalas !== null) {
+        doc.respuestasMalas = Object.keys(doc.respuestasMalas).map(key => ({
+            id: key,
+            ...(doc.respuestasMalas as { [key: string]: any })[key] 
+        }));
+    }
+    let conProblemas = doc.respuestasMalas.length; //obtener el largo de la lista de respuestas malas o si existe almenos 1 
 
     if(!needValidacion){
 

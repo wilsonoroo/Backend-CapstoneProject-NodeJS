@@ -122,7 +122,7 @@ export function crearDoc(): Documento {
 	user.id = 'idUsuarios';
 	user.email = 'idUsuarios@gmail.com';
 	const doc = new Documento();
-	doc.id = 'd7';
+	doc.id = 'd6';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = true;
@@ -136,7 +136,7 @@ export function crearDoc(): Documento {
 	checklist.descripcion = 'descripcionChecklist';
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
-	configuracion.needValidacion = false;
+	configuracion.needValidacion = true;
 	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;
@@ -182,20 +182,35 @@ export const obtenerNombres = onDocumentUpdated("/empresas/{nombreEmpresa}/geren
     const nombreDivision = event.params.nombreDivision;
     console.log("🚀 ~ file: index.ts:183 ~ test ~ nombreDivision:", nombreDivision)
     // const datos = event.data?.after.data();
-    const datos2 = event.data?.after.data() as Documento;
-    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].id)
-    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].id)
-    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].contenido)
-    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].contenido)
-    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].tipo)
-    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].tipo)
+    const doc  = event.data?.after.data()as Documento;
+
+    // Si respuestasMalas es un objeto y deseas convertirlo en un arreglo:
+    if (typeof doc.respuestasMalas === 'object' && doc.respuestasMalas !== null) {
+        doc.respuestasMalas = Object.keys(doc.respuestasMalas).map(key => ({
+            id: key,
+            ...(doc.respuestasMalas as { [key: string]: any })[key]  // Usamos una aserción de tipo para evitar el error
+        }));
+    }
+    if (doc.respuestasMalas.length>0){
+        console.log("Respuestas malas hay caleta")
+    }
+    console.log("🚀 ~ file: index.ts:200 ~ obtenerNombres ~ doc.respuestasMalas:", doc.respuestasMalas)
+    console.log("🚀 ~ file: index.ts:200 ~ obtenerNombres ~ doc.respuestasMalas:", doc.respuestasMalas[1].id)
+
+    // const datos2 = event.data?.after.data() as Documento;
+    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].id)
+    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].id)
+    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].contenido)
+    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].contenido)
+    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].tipo)
+    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].tipo)
     // console.log("🚀 ~ file: index.ts:185 ~ obtenerNombres ~ datos:", datos)
     
 
 });
 export const generarDoc =onRequest(async (request: Request, response: Response) => {
-    const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
-    // const rutaDoc = '/documentos';
+    // const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
+    const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc2 = crearDoc();
     // let docAux: Partial<Documento> = { ...doc2 };//buscando forma de eliminar y no exista duplicidad

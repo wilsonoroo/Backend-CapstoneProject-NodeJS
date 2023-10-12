@@ -17,8 +17,10 @@ export class Storage{
      * Metodo para  guardar un archivo PDF en el almacenamiento en el Storage 
      * y devolver un objeto Archivo para almacenarlo en la base de datos.
      */   
-    static saveFile(empresa:string,pdf:any): Archivo{
+    static saveFilePDF(empresa:string,pdf:any): Archivo|null{
 
+      try{
+        let archivo = new Archivo();
         this.id =uuidv4();
         this.filePath = empresa + "/pdf/" + this.id;
         this.token  = uuidv4();
@@ -37,18 +39,19 @@ export class Storage{
         file.save(pdf,options);
 
         const urlFile = "https://firebasestorage.googleapis.com/v0" + file.parent.baseUrl + "/" + bucket.name + file.baseUrl + "/" + empresa + "%2Fpdf%2F" + this.id + "?alt=media&token=" + this.token;
-        console.log("🚀 ~ file: storage.ts:39 ~ Storage ~ saveFile ~ urlFile:", urlFile)
-        //a la url le falta vaku-dev.appspot.com --- esta entre la b y la o b/vaku-dev.appspot.com/o/
-
-        let archivo = new Archivo();
+        const nombrePDF = empresa+"_pdf_"+this.id+".pdf";
         archivo.id= this.id;
-        archivo.name="archivo1.pdf";
+        archivo.name=nombrePDF;
         archivo.path=this.filePath;
         archivo.url=urlFile;
         archivo.size=file.metadata.size;
-    
+        return archivo;   
+      }catch(error){
+        console.error(error);
+        return null
+      }
 
-        return archivo;    
+  
 
     }
 }

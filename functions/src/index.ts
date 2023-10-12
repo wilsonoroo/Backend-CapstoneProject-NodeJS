@@ -5,6 +5,7 @@ import {
 	flujo3, 
 	myfunction,
 	archivotest,
+	obtenerNombres,
 } from './functions'
 // The Firebase Admin SDK to access Firestore.
 const {initializeApp} = require("firebase-admin/app");
@@ -18,3 +19,4 @@ export const flujoN = FlujoActualizarPDF;//flujo para cuando se actualiza un doc
 export const flujoGenerarDoc = GenerarDocumento;//flujo para cuando se actualiza un documento
 export const notification = flujo3;
 export const is2 = myfunction;
+export const nombre= obtenerNombres;

@@ -29,14 +29,14 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
     const estadoAnterior =  docAnterior.estado;
-    let pdf ;
+    let pdf ; // o var pdf
     console.log("🚀 ~ file: index.ts:33 ~ FlujoActualizarPDF ~ pdf:", pdf)
 
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
         if(estadoAnterior === "documento_con_problema"||estadoAnterior === "documento_sin_problema"){
             pdf =EnkiCreator.generarPDF(doc)
-            // doc.pdf = Storage.saveFile(empresa,pdfData);
+            // doc.pdf = Storage.saveFilePDF(empresa,pdfData);
 
             console.log("EL DOCUMENTO YA SE VALIDO");
             
@@ -86,7 +86,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
                 else{
                     //generar PDF luego Enviarlo a la Nube y generar el mensaje
                     pdf =EnkiCreator.generarPDF(doc)
-                    // doc.pdf = Storage.saveFile(empresa,pdfData);
+                    // doc.pdf = Storage.saveFilePDF(empresa,pdfData);
                     console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                     const mensaje = {
                         title: 'Aviso',
@@ -99,7 +99,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
             }
             else{
                 // pdf =EnkiCreator.generarPDF(doc);
-                // doc.pdf = Storage.saveFile(empresa,pdfData);
+                // doc.pdf = Storage.saveFilePDF(empresa,pdfData);
 
                 console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                 const mensaje = {
@@ -174,9 +174,28 @@ export function crearDoc(): Documento {
 	return doc
 }
 
+export const obtenerNombres = onDocumentUpdated("/empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event) => {
+    const nombreEmpresa = event.params.nombreEmpresa;
+    console.log("🚀 ~ file: index.ts:179 ~ test ~ nombreEmpresa:", nombreEmpresa)
+    const nombreGerencia = event.params.nombreGerencia;
+    console.log("🚀 ~ file: index.ts:181 ~ test ~ nombreGerencia:", nombreGerencia)
+    const nombreDivision = event.params.nombreDivision;
+    console.log("🚀 ~ file: index.ts:183 ~ test ~ nombreDivision:", nombreDivision)
+    // const datos = event.data?.after.data();
+    const datos2 = event.data?.after.data() as Documento;
+    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].id)
+    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].id)
+    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].contenido)
+    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].contenido)
+    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].tipo)
+    console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].tipo)
+    // console.log("🚀 ~ file: index.ts:185 ~ obtenerNombres ~ datos:", datos)
+    
 
+});
 export const generarDoc =onRequest(async (request: Request, response: Response) => {
-    const rutaDoc = '/documentos';
+    const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
+    // const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc2 = crearDoc();
     // let docAux: Partial<Documento> = { ...doc2 };//buscando forma de eliminar y no exista duplicidad
@@ -223,8 +242,8 @@ export const generarDoc =onRequest(async (request: Request, response: Response) 
 export const archivotest = onRequest(async (request: Request, response: Response) => {
 
     try {
-        Storage.saveFile(empresa,pdfData);
-        console.log("ARCHIVO SUBIDO");
+        Storage.saveFilePDF(empresa,pdfData);
+        //console.log("ARCHIVO SUBIDO");
         response.send("enviado");        
     } catch (error) {
         console.error(error);

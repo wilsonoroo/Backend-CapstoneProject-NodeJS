@@ -41,7 +41,7 @@ export const myfunction = onDocumentWritten("documentos/{docId}", async(event) =
             
             repo.updateDocument(docId, {estado: "pendiente_validar"} )
             // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
-            const tokens = Object.values(dataAfter.cuadrilla.validadores).map(validador => validador.codigo);
+            const tokens = Object.values(dataAfter.cuadrilla.validadores).map(validador => validador.token);
             const mensaje = {
                 title: 'Validación requerida',
                 body: 'Debes firmar el documento IS.'

@@ -1,12 +1,11 @@
 import { IIntegrante } from "../../interface";
 import { User } from "../usuario";
 
-export class Integrante implements IIntegrante<User>{
+export class Integrante extends User implements IIntegrante{
     id: string;
     rut: string;
     cargo: string;
     nombre: string;
     codigo: string;
     isFirmado: boolean;
-    usuario: User;
 }

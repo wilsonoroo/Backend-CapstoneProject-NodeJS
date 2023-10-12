@@ -18,6 +18,7 @@ export class Storage{
      * y devolver un objeto Archivo para almacenarlo en la base de datos.
      */   
     static saveFile(empresa:string,pdf:any): Archivo{
+
         this.id =uuidv4();
         this.filePath = empresa + "/pdf/" + this.id;
         this.token  = uuidv4();
@@ -30,13 +31,13 @@ export class Storage{
             },
           };   
 
-
+        
         const bucket = admin.storage().bucket();
         const file = bucket.file(this.filePath);
         file.save(pdf,options);
 
-        const urlFile = "https://firebasestorage.googleapis.com/v0" + file.parent.baseUrl + "/" + file.metadata.bucket + file.baseUrl + "/" + empresa + "%2Fpdf%2F" + this.id + "?alt=media&token=" + this.token;
-        // console.log("🚀 ~ file: storage.ts:39 ~ Storage ~ saveFile ~ urlFile:", urlFile)
+        const urlFile = "https://firebasestorage.googleapis.com/v0" + file.parent.baseUrl + "/" + bucket.name + file.baseUrl + "/" + empresa + "%2Fpdf%2F" + this.id + "?alt=media&token=" + this.token;
+        console.log("🚀 ~ file: storage.ts:39 ~ Storage ~ saveFile ~ urlFile:", urlFile)
         //a la url le falta vaku-dev.appspot.com --- esta entre la b y la o b/vaku-dev.appspot.com/o/
 
         let archivo = new Archivo();

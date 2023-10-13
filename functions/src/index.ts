@@ -11,7 +11,7 @@ import {
 	// initCounter, 
 	// incrementCounterBy, 
 	getCounterValue } from './functions/flujoIS/contadorDistribuido';  // Asegúrate de cambiar a la ruta correcta
-// import { myfunctionk } from './functions/flujoIS/test1';
+import { myfunctionk } from './functions/flujoIS/test1';
 // import { myfunctionk1 } from './functions/flujoIS/test2';
 import { myfunction } from './functions';
 
@@ -20,7 +20,7 @@ const db = firestore();
 
 
 
-// export const contando = myfunctionk;
+export const contando = myfunctionk;
 // export const contando1 = myfunctionk1;
 export const IS = myfunction;
 // export const salu2 = flujo;

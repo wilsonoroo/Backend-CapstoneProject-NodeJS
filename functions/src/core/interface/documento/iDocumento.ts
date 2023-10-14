@@ -25,4 +25,10 @@ export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, 
 	validadoDobleChequeoPor?: AUTH;
 	vistos?: any;
 	//metodo para verificar emisor retorna un booleano
+
+	//metodos de documento
+	needPlanDeAccion ():boolean;
+	needValidacion(): boolean;
+	DocumentoConProblemas(): boolean;
+
 }

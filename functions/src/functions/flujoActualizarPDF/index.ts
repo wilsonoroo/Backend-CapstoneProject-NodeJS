@@ -8,6 +8,8 @@ import {onRequest} from 'firebase-functions/v2/https';
 import {Request, Response} from 'firebase-functions';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
 import * as fs from 'fs';
+import { plainToClass } from "class-transformer";
+
 
 const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
 const empresa = "VAKU";
@@ -16,27 +18,30 @@ const empresa = "VAKU";
 export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async(event) => {
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
-    const doc = event.data?.after.data() as Documento;
-    const docAnterior = event.data?.before.data() as Documento;
+    //obtener datos y transformarlo a Documento
+    const data = event.data?.after.data();
+    const doc = plainToClass(Documento, data as Object);
+    //obtener datos anteriores y transformarlo a Documento
+    const dataAnterior = event.data?.after.data();
+    const docAnterior = plainToClass(Documento, dataAnterior as Object);
+
     const notificationService = new NotificationService();
     // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
     // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
     const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
 
-
-
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
-    const needPlandeAccion = doc.checklist.configuracion.needPlanDeAccion;
+    const needPlandeAccion = doc.needPlanDeAccion();
     const estadoAnterior =  docAnterior.estado;
     let pdf ; // o var pdf
     console.log("🚀 ~ file: index.ts:33 ~ FlujoActualizarPDF ~ pdf:", pdf)
 
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
-        if(estadoAnterior === "documento_con_problema"||estadoAnterior === "documento_sin_problema"){
+        if(estadoAnterior === "doc_con_problema"||estadoAnterior === "doc_sin_problema"){
             pdf =EnkiCreator.generarPDF(doc)
-            // doc.pdf = Storage.saveFilePDF(empresa,pdfData);
+            // doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
 
             console.log("EL DOCUMENTO YA SE VALIDO");
             
@@ -86,7 +91,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
                 else{
                     //generar PDF luego Enviarlo a la Nube y generar el mensaje
                     pdf =EnkiCreator.generarPDF(doc)
-                    // doc.pdf = Storage.saveFilePDF(empresa,pdfData);
+                    // doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
                     console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                     const mensaje = {
                         title: 'Aviso',
@@ -99,7 +104,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
             }
             else{
                 // pdf =EnkiCreator.generarPDF(doc);
-                // doc.pdf = Storage.saveFilePDF(empresa,pdfData);
+                // doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
 
                 console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                 const mensaje = {
@@ -176,41 +181,34 @@ export function crearDoc(): Documento {
 
 export const obtenerNombres = onDocumentUpdated("/empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event) => {
     const nombreEmpresa = event.params.nombreEmpresa;
+    // Storage .saveFilePDF(nombreEmpresa,pdf);
     console.log("🚀 ~ file: index.ts:179 ~ test ~ nombreEmpresa:", nombreEmpresa)
     const nombreGerencia = event.params.nombreGerencia;
     console.log("🚀 ~ file: index.ts:181 ~ test ~ nombreGerencia:", nombreGerencia)
     const nombreDivision = event.params.nombreDivision;
     console.log("🚀 ~ file: index.ts:183 ~ test ~ nombreDivision:", nombreDivision)
     // const datos = event.data?.after.data();
-    const doc  = event.data?.after.data()as Documento;
-
+    // const doc = event.data?.after.data() as Documento;
     // Si respuestasMalas es un objeto y deseas convertirlo en un arreglo:
-    if (typeof doc.respuestasMalas === 'object' && doc.respuestasMalas !== null) {
-        doc.respuestasMalas = Object.keys(doc.respuestasMalas).map(key => ({
-            id: key,
-            ...(doc.respuestasMalas as { [key: string]: any })[key]  // Usamos una aserción de tipo para evitar el error
-        }));
-    }
-    if (doc.respuestasMalas.length>0){
-        console.log("Respuestas malas hay caleta")
-    }
-    console.log("🚀 ~ file: index.ts:200 ~ obtenerNombres ~ doc.respuestasMalas:", doc.respuestasMalas)
-    console.log("🚀 ~ file: index.ts:200 ~ obtenerNombres ~ doc.respuestasMalas:", doc.respuestasMalas[1].id)
+    const docData = event.data?.after.data();
+    const doc2 = plainToClass(Documento, docData as Object);
+    // console.log("🚀 ~ file: index.ts:193 ~ obtenerNombres ~ doc2:", doc2.needPlanDeAccion())
+    // console.log(doc.estado);
 
-    // const datos2 = event.data?.after.data() as Documento;
-    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].id)
-    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].id)
-    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].contenido)
-    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].contenido)
-    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[0].tipo)
-    // console.log("🚀 ~ file: index.ts:186 ~ obtenerNombres ~ datos2:", datos2.respuestasMalas[1].tipo)
-    // console.log("🚀 ~ file: index.ts:185 ~ obtenerNombres ~ datos:", datos)
-    
+    // const docData2 = event.data?.after.data();
+    // const doc3 = Object.assign(new Documento(), docData2);
+    // console.log("🚀Documento con problemas", doc3.DocumentoConProblemas())
 
+    const needValidacion = doc2.needValidacion();
+    console.log("🚀 ~ file: index.ts:203 ~ obtenerNombres ~ needValidacion:", needValidacion)
+    const needPlanDeAccion = doc2.needPlanDeAccion(); 
+    console.log("🚀 ~ file: index.ts:205 ~ obtenerNombres ~ needPlanDeAccion:", needPlanDeAccion)
+    const conProblemas = doc2.DocumentoConProblemas();
+    console.log("🚀 ~ file: index.ts:207 ~ obtenerNombres ~ conProblemas:", conProblemas)
 });
 export const generarDoc =onRequest(async (request: Request, response: Response) => {
-    // const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
-    const rutaDoc = '/documentos';
+    const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
+    // const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc2 = crearDoc();
     // let docAux: Partial<Documento> = { ...doc2 };//buscando forma de eliminar y no exista duplicidad

@@ -33,12 +33,14 @@ export class Storage{
             },
           };   
 
-        
-        const bucket = admin.storage().bucket();
+        //dentro del bucket va la empresa por el momento
+        // const bucket = admin.storage().bucket(empresa);// aqui cambiar el nombre del bucket para cada empresa el nombre del bucket puede ser la id de la empresa
+        const bucket = admin.storage().bucket("vaku-dev.appspot.com");// aqui cambiar el nombre del bucket para cada empresa el nombre del bucket puede ser la id de la empresa
         const file = bucket.file(this.filePath);
         file.save(pdf,options);
 
         const urlFile = "https://firebasestorage.googleapis.com/v0" + file.parent.baseUrl + "/" + bucket.name + file.baseUrl + "/" + empresa + "%2Fpdf%2F" + this.id + "?alt=media&token=" + this.token;
+        console.log("🚀 ~ file: storage.ts:42 ~ Storage ~ saveFilePDF ~ urlFile:", urlFile)
         const nombrePDF = empresa+"_pdf_"+this.id+".pdf";
         archivo.id= this.id;
         archivo.name=nombrePDF;

@@ -3,6 +3,9 @@ import {FirestoreRepository} from '../../core/services/repository/FirestoreRepos
 import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
+import { plainToClass } from "class-transformer";
+
+
 const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
 
 
@@ -10,22 +13,17 @@ const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2
 export const GenerarDocumento = onDocumentCreated("/documentos/{docId}", async(event)  => {
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
-    const doc = event.data?.data() as Documento;// documento a crear
+    //obtener datos y transformarlo a Documento
+    const data = event.data?.data();
+    const doc = plainToClass(Documento, data as Object);
+    
     const notificationService = new NotificationService();
 
-    const needValidacion = doc.checklist.configuracion.needValidacion;
-    const needPlanDeAccion = doc.checklist.configuracion.needPlanDeAccion;
-    //transformar el mapa a un arreglo para mi estructura de datos
-    if (typeof doc.respuestasMalas === 'object' && doc.respuestasMalas !== null) {
-        doc.respuestasMalas = Object.keys(doc.respuestasMalas).map(key => ({
-            id: key,
-            ...(doc.respuestasMalas as { [key: string]: any })[key] 
-        }));
-    }
-    let conProblemas = doc.respuestasMalas.length; //obtener el largo de la lista de respuestas malas o si existe almenos 1 
+    const needValidacion = doc.needValidacion();
+    const needPlanDeAccion = doc.needPlanDeAccion(); 
+    const conProblemas = doc.DocumentoConProblemas();
 
     if(!needValidacion){
-
         doc.pdf =EnkiCreator.generarPDF(doc)
         // let pdf = await EnkiCreator.generarPDF(doc);
         // doc.pdf = await Storage.Savefile(pdf);
@@ -43,8 +41,8 @@ export const GenerarDocumento = onDocumentCreated("/documentos/{docId}", async(e
             repo.updateDocument(doc.id, {estado: "finalizado"} );
         }
     }else{
-        if(conProblemas > 0){
-            repo.updateDocument(doc.id, {estado: "documento_con_problemas"} );
+        if(conProblemas){
+            repo.updateDocument(doc.id, {estado: "doc_con_problemas"} );
             console.log("DOCUMENTO CON PROBLEMAS");                    
             const mensaje = {
                 title: 'AVISO',
@@ -53,9 +51,8 @@ export const GenerarDocumento = onDocumentCreated("/documentos/{docId}", async(e
             await notificationService.sendNotificationMulticast(tokens, mensaje);
     
         }
-        else if(conProblemas == 0 ){
-            doc.estado = 'documento_sin_problema';
-            repo.updateDocument(doc.id, {estado: "documento_sin_problemas"} );
+        else if(!conProblemas){
+            repo.updateDocument(doc.id, {estado: "doc_sin_problemas"} );
             console.log("DOCUMENTO SIN PROBLEMAS");                    
             const mensaje = {
                 title: 'AVISO',

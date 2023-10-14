@@ -14,7 +14,7 @@ import { plainToClass } from "class-transformer";
 const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
 const empresa = "VAKU";
 
-
+//Flujo de actualizacion de documentos
 export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async(event) => {
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
@@ -121,7 +121,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("/documentos/{docId}", async
 
 
 
-
+//Metodos de prueba de funcionalidaes
 export function crearDoc(): Documento {
 	const user = new User();
 	user.id = 'idUsuarios';

@@ -14,6 +14,7 @@ import { getCounterValue, incrementCounterBy, initCounter } from './contadorDist
  * @example
  * myfunctionk(event);
  */
+
 export const myfunctionk = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentos/{docId}", async(event) => {
     try {
         const snapshot = event.data;
@@ -40,6 +41,8 @@ export const myfunctionk = onDocumentWritten("empresas/{idEmpresa}/gerencias/{id
             await handleCounter(db, rootPath, numShards, 1, dataAfter.estado);
 
             await duplicateDocumentInStatusCollection(db, event.params, dataAfter, emisorId);
+
+            await handleCuadrillaLogic(db, event.params, dataAfter, "increment", getRootPath);
         } else if (dataBefore.estado !== dataAfter.estado) { 
             console.log(`Cambio de estado detectado en documento ID: ${event.params.docId}. De "${dataBefore.estado}" a "${dataAfter.estado}"`);
 
@@ -50,11 +53,16 @@ export const myfunctionk = onDocumentWritten("empresas/{idEmpresa}/gerencias/{id
             await handleCounter(db, rootPathAfter, numShards, 1, dataAfter.estado);
 
             await moveDocumentToNewStatusCollection(db, event.params, dataBefore, dataAfter, emisorId);
+
+            await handleCuadrillaLogic(db, event.params, dataBefore, "decrement", getRootPath);
+            await handleCuadrillaLogic(db, event.params, dataAfter, "increment", getRootPath);
+            
         }
     } catch (error) {
         console.error(`Error al procesar el documento ID: ${event.params.docId}. Detalle del error:`, error);
     }
 });
+
 
 /**
  * Duplica un documento en la colección correspondiente basada en el estado del documento.
@@ -66,7 +74,7 @@ export const myfunctionk = onDocumentWritten("empresas/{idEmpresa}/gerencias/{id
  * 
  * @example
  * await duplicateDocumentInStatusCollection(db, params, dataAfter, emisorId);
- */
+*/
 async function duplicateDocumentInStatusCollection(db: FirebaseFirestore.Firestore, params: any, data: Documento, emisorId: string) {
     const docPath = `empresas/${params.idEmpresa}/gerencias/${params.idGerencia}/divisiones/${params.idDivision}/documentosUsuarios/${emisorId}/${data.estado}/${params.docId}`;
     await db.doc(docPath).set(data);
@@ -75,26 +83,25 @@ async function duplicateDocumentInStatusCollection(db: FirebaseFirestore.Firesto
 /**
  * Mueve un documento de su estado/campo anterior a uno nuevo.
  * Esta función garantiza que el documento se elimine de la colección/estado anterior y se agregue al nuevo estado/campo.
- *
- * @param {FirebaseFirestore.Firestore} db - La instancia de Firestore.
- * @param {any} params - Parámetros que contienen información del documento y su estructura de ruta.
- * @param {Documento} dataBefore - Datos previos del documento antes del cambio.
+*
+* @param {FirebaseFirestore.Firestore} db - La instancia de Firestore.
+* @param {any} params - Parámetros que contienen información del documento y su estructura de ruta.
+* @param {Documento} dataBefore - Datos previos del documento antes del cambio.
  * @param {Documento} dataAfter - Nuevos datos del documento después del cambio.
  * @param {string} emisorId - ID del emisor del documento.
  * 
  * @example
  * await moveDocumentToNewStatusCollection(db, params, dataBefore, dataAfter, emisorId);
- */
+*/
 async function moveDocumentToNewStatusCollection(db: FirebaseFirestore.Firestore, params: any, dataBefore: Documento, dataAfter: Documento, emisorId: string) {
     const oldDocPath = `empresas/${params.idEmpresa}/gerencias/${params.idGerencia}/divisiones/${params.idDivision}/documentosUsuarios/${emisorId}/${dataBefore.estado}/${params.docId}`;
     const newDocPath = `empresas/${params.idEmpresa}/gerencias/${params.idGerencia}/divisiones/${params.idDivision}/documentosUsuarios/${emisorId}/${dataAfter.estado}/${params.docId}`;
-
+    
     await db.runTransaction(async (t) => {
         t.delete(db.doc(oldDocPath));
         t.set(db.doc(newDocPath), dataAfter);
     });
 }
-
 
 /**
  * @function handleCounter
@@ -119,11 +126,11 @@ async function handleCounter(db: firestore.Firestore, rootPath: string, numShard
         console.log(`Inicializando contador para el estado: ${estado} en path: ${rootPath}`);
         await initCounter(db, rootPath, numShards);
     }
-
+    
     // Incrementar/decrementar el contador.
     await incrementCounterBy(db, rootPath, numShards, value);
     console.log(`Actualizado contador para el estado: ${estado} en path: ${rootPath}`);
-
+    
     // Calcular y actualizar el contador total en Firestore.
     const totalCount = await getCounterValue(db, rootPath);
     
@@ -144,7 +151,58 @@ async function handleCounter(db: firestore.Firestore, rootPath: string, numShard
  * 
  * @example
  * capitalize("validado"); // Retorna "Validado"
- */
+*/
 function capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Maneja la lógica relacionada con la cuadrilla para duplicar documentos y actualizar contadores.
+ *
+ * @param {FirebaseFirestore.Firestore} db - La instancia de Firestore.
+ * @param {any} params - Parámetros que incluyen identificadores para construir la ruta del documento.
+ * @param {Documento} data - Los datos del documento a duplicar.
+ * @param {"increment" | "decrement"} operation - Operación a realizar en los contadores (incrementar o decrementar).
+ * @param {(estado: string, emisorId: string) => string} getRootPath - Función que genera la ruta base para el contador.
+ *
+ * @throws {FirebaseFirestore.FirestoreError} - Lanza un error si la operación en Firestore falla.
+ * 
+ * @example
+ * await handleCuadrillaLogic(db, params, data, "increment", getRootPath);
+ */
+async function handleCuadrillaLogic(
+    db: FirebaseFirestore.Firestore, 
+    params: any, 
+    data: Documento, 
+    operation: "increment" | "decrement", 
+    getRootPath: (estado: string, emisorId: string) => string
+) {
+    if(data.cuadrilla && data.cuadrilla.integrantes) {
+        for(const userId of Object.keys(data.cuadrilla.integrantes)) {
+            await duplicateDocumentForUser(db, params, data, userId);
+
+            const rootPath = getRootPath(data.estado, userId);
+            const numShards = 10;
+            const value = operation === "increment" ? 1 : -1;
+            await handleCounter(db, rootPath, numShards, value, data.estado);
+        }
+    }
+}
+
+/**
+ * Duplica un documento para un usuario específico.
+ *
+ * @param {FirebaseFirestore.Firestore} db - La instancia de Firestore.
+ * @param {any} params - Parámetros que incluyen identificadores para construir la ruta del documento.
+ * @param {Documento} data - Los datos del documento a duplicar.
+ * @param {string} userId - El ID del usuario para el que se duplicará el documento.
+ *
+ * @throws {FirebaseFirestore.FirestoreError} - Lanza un error si la operación en Firestore falla.
+ * 
+ * @example
+ * await duplicateDocumentForUser(db, params, data, userId);
+ */
+async function duplicateDocumentForUser(db: FirebaseFirestore.Firestore, params: any, data: Documento, userId: string) {
+    const docPath = `empresas/${params.idEmpresa}/gerencias/${params.idGerencia}/divisiones/${params.idDivision}/documentosUsuarios/${userId}/${data.estado}/${params.docId}`;
+    await db.doc(docPath).set(data);
 }

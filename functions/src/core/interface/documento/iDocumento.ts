@@ -1,4 +1,4 @@
-export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA> {
+export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA,ARCHIVO> {
 	id: string;
 	checklist: CHECKLIST;
 	checklistChildren: CHECKLIST;
@@ -8,14 +8,14 @@ export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, 
 	encabezado: ENCABEZADO;
 	estado: string;
 	fechaCreacion: Date;
-	fechaSubida?: Date; //posiblemente no
-	fechaValidacion?: Date; //posiblemente no
+	fechaSubida?: Date; 
+	fechaValidacion?: Date; 
 	fechaValidacionDobleChequeo?: Date;
 	isAutoValidacion?: boolean;
 	isConCuadrilla?: boolean;
 	isParticipantesCruzados?: boolean;
 	isPlanDeAccion: boolean;
-	pdf?: any; //--> preguntar //es de tipo archivo
+	pdf?: ARCHIVO; 
 	respuestasMalas: RESPUESTA[];
 	respuestasMalasChildren: RESPUESTA[];
 	seccionesRespuestas: SECCIONRESP;
@@ -25,4 +25,10 @@ export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, 
 	validadoDobleChequeoPor?: AUTH;
 	vistos?: any;
 	//metodo para verificar emisor retorna un booleano
+
+	//metodos de documento
+	needPlanDeAccion ():boolean;
+	needValidacion(): boolean;
+	DocumentoConProblemas(): boolean;
+
 }

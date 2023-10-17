@@ -1,4 +1,5 @@
 import {IDocumento} from '../../interface'
+import { Archivo } from '../archivo'
 import {Checklist} from '../checklist'
 import { Cuadrilla } from '../cuadrilla'
 import {Encabezado} from '../encabezado'
@@ -6,7 +7,7 @@ import {Respuesta} from '../respuesta'
 import {SeccionRespuesta} from '../seccionRespuesta'
 import {User} from '../usuario'
 
-export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabezado, SeccionRespuesta, Respuesta> {
+export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabezado, SeccionRespuesta, Respuesta,Archivo> {
 	id: string;
 	checklist: Checklist;
 	checklistChildren: Checklist;
@@ -16,16 +17,16 @@ export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabeza
 	encabezado: Encabezado;
 	estado: string;
 	fechaCreacion: Date;
-	fechaSubida?: Date; //posiblemente no
-	fechaValidacion?: Date; //posiblemente no
+	fechaSubida?: Date; 
+	fechaValidacion?: Date; 
 	fechaValidacionDobleChequeo?: Date;
 	isAutoValidado?: boolean;
 	isConCuadrilla?: boolean;
 	isParticipantesCruzados?: boolean;
 	isPlanDeAccion: boolean;
-	pdf?: any; //--> preguntar
+	pdf?: Archivo; 
 	respuestasMalas: Respuesta[];
-	respuestasMalasChildren: Respuesta[]; //-->
+	respuestasMalasChildren: Respuesta[]; 
 	seccionesRespuestas: SeccionRespuesta;
 	seccionesRespuestasChildren: SeccionRespuesta;
 	seccionesRespuestasValidacion: SeccionRespuesta;

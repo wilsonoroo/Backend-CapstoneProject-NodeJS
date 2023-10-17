@@ -10,7 +10,7 @@ const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2
 
 
 //Flujo de Generar Documento 
-export const GenerarDocumento = onDocumentCreated("/documentos/{docId}", async(event)  => {
+export const GenerarDocumento = onDocumentCreated("/empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
     const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     //obtener datos y transformarlo a Documento

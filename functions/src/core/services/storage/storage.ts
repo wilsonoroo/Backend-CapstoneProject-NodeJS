@@ -17,10 +17,10 @@ export class Storage{
      * Metodo para  guardar un archivo PDF en el almacenamiento en el Storage 
      * y devolver un objeto Archivo para almacenarlo en la base de datos.
      */   
-    static saveFilePDF(empresa:string,pdf:any): Archivo|null{
+    static saveFilePDF(empresa:string,pdf:any): Archivo{
+      const archivo = new Archivo();
 
       try{
-        let archivo = new Archivo();
         this.id =uuidv4();
         this.filePath = empresa + "/pdf/" + this.id;
         this.token  = uuidv4();
@@ -50,7 +50,7 @@ export class Storage{
         return archivo;   
       }catch(error){
         console.error(error);
-        return null
+        return archivo;
       }
 
   

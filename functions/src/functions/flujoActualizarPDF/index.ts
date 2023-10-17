@@ -4,8 +4,8 @@ import {FirestoreRepository} from '../../core/services/repository/FirestoreRepos
 import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
 import { Storage } from '../../core/services/storage/storage';
 import { onDocumentUpdated,  } from "firebase-functions/v2/firestore";
-import {onRequest} from 'firebase-functions/v2/https';
-import {Request, Response} from 'firebase-functions';
+// import {onRequest} from 'firebase-functions/v2/https';
+// import {Request, Response} from 'firebase-functions';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
 import { plainToClass } from "class-transformer";
 import * as fs from 'fs';
@@ -14,15 +14,15 @@ import * as fs from 'fs';
 const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
 
 //Flujo de actualizacion de documentos
-export const FlujoActualizarPDF = onDocumentUpdated("/empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event) => {
-    const rutaDoc = '/documentos';
+export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event) => {
+    const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     //obtener datos y transformarlo a Documento
     const data = event.data?.after.data();
-    const doc = plainToClass(Documento, data as Object);
+    const doc = plainToClass(Documento, data as Documento);
     //obtener datos anteriores y transformarlo a Documento
     const dataAnterior = event.data?.after.data();
-    const docAnterior = plainToClass(Documento, dataAnterior as Object);
+    const docAnterior = plainToClass(Documento, dataAnterior as Documento);
     const notificationService = new NotificationService();
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
@@ -124,14 +124,14 @@ export const FlujoActualizarPDF = onDocumentUpdated("/empresas/{nombreEmpresa}/g
 
 //Metodos de prueba de funcionalidaes
 
-export const archivotest = onRequest(async (request: Request, response: Response) => {
+// export const archivotest = onRequest(async (request: Request, response: Response) => {
 
-    try {
-        const doc = Storage.saveFilePDF("VAKU",pdfData);
-        //console.log("ARCHIVO SUBIDO");
-        response.send(doc);        
-    } catch (error) {
-        console.error(error);
-        response.status(500).send('Hubo un error');
-    }
-});
+//     try {
+//         const doc = Storage.saveFilePDF("VAKU",pdfData);
+//         //console.log("ARCHIVO SUBIDO");
+//         response.send(doc);        
+//     } catch (error) {
+//         console.error(error);
+//         response.status(500).send('Hubo un error');
+//     }
+// });

@@ -17,7 +17,7 @@ import NotificationService from './notificacionFCM';
 const notificationService = new NotificationService();
 
 
-export const myfunction = onDocumentWritten("documentos/{docId}", async(event) => {    
+export const myfunction = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentos/{docId}", async(event) => {    
     const snapshot = event.data;
     if (!snapshot) {
         console.log("No data associated with the event");
@@ -27,11 +27,12 @@ export const myfunction = onDocumentWritten("documentos/{docId}", async(event) =
     const dataBefore = snapshot.before.data() as Documento;
     const dataAfter = snapshot.after.data() as Documento;
 
+
     console.log(docId)
     console.log(dataBefore);
     console.log(dataAfter)
 
-    const repo = new FirestoreRepository<Documento>('documentos'); 
+    const repo = new FirestoreRepository<Documento>(`empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentos`); 
 
     if (dataAfter.cuadrilla && todosHanFirmado(dataAfter)) {
         // Aquí es donde verificas si todos han firmado en la cuadrilla

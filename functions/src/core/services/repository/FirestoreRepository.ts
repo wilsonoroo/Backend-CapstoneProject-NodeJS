@@ -127,7 +127,7 @@ export class FirestoreRepository<T> implements IRepository<any> {
 		})
 	}	
 
-	deleteCollection(collectionName: string): Promise<boolean> {
-		throw new Error('Method not implemented.')
-	};
+	// deleteCollection(collectionName: string): Promise<boolean> {
+	// 	throw new Error('Method not implemented.')
+	// };
 }

@@ -17,6 +17,6 @@ interface IRepository<T> {
 	deleteDocument(documentId: string): Promise<void>
 
 	// metodos soaciados a CRUD de colecciones
-	deleteCollection<T>(collectionName: string): Promise<boolean>
+	// deleteCollection<T>(collectionName: string): Promise<boolean>
 
 }

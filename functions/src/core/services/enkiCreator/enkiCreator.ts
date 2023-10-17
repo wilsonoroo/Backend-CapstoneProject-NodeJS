@@ -5,7 +5,7 @@ export class EnkiCreator{
         //subir pdf y retornalo 
         
         // de aqui abajo va al save file
-        let archivo1 = new Archivo();
+        const archivo1 = new Archivo();
         archivo1.id="a1";
         archivo1.name="archivo1.pdf";
         archivo1.path="path1";

@@ -11,12 +11,12 @@ import * as fs from 'fs';
 const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
 
 //Flujo de Generar Documento 
-export const GenerarDocumento = onDocumentCreated("/empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
-    const rutaDoc = '/documentos';
+export const GenerarDocumento = onDocumentCreated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
+    const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     //obtener datos y transformarlo a Documento
     const data = event.data?.data();
-    const doc = plainToClass(Documento, data as Object);
+    const doc = plainToClass(Documento, data as Documento);
     const notificationService = new NotificationService();
     const needValidacion = doc.needValidacion();
     const needPlanDeAccion = doc.needPlanDeAccion(); 

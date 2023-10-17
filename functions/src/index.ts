@@ -3,7 +3,7 @@ import {
 	GenerarDocumento,
 	// flujo3, 
 	myfunction,
-	archivotest,
+	// archivotest,
 } from './functions'
 import { myfunctionk } from './functions/flujoIS/test1';
 
@@ -13,7 +13,7 @@ import {initializeApp} from "firebase-admin/app";
 initializeApp();
 
 
-export const generarArchivoPRueba = archivotest;//generar archivo de prueba
+// export const generarArchivoPRueba = archivotest;//generar archivo de prueba
 export const flujoActualizarDocumento = FlujoActualizarPDF;//flujo para cuando se actualiza un documento
 export const flujoGenerarDoc = GenerarDocumento;//flujo para cuando se actualiza un documento
 export const contando = myfunctionk;

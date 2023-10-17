@@ -7,12 +7,11 @@ import { onDocumentUpdated,  } from "firebase-functions/v2/firestore";
 import {onRequest} from 'firebase-functions/v2/https';
 import {Request, Response} from 'firebase-functions';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
-import * as fs from 'fs';
 import { plainToClass } from "class-transformer";
+import * as fs from 'fs';
 
 
 const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
-const empresa = "VAKU";
 
 //Flujo de actualizacion de documentos
 export const FlujoActualizarPDF = onDocumentUpdated("/empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event) => {
@@ -24,17 +23,18 @@ export const FlujoActualizarPDF = onDocumentUpdated("/empresas/{nombreEmpresa}/g
     //obtener datos anteriores y transformarlo a Documento
     const dataAnterior = event.data?.after.data();
     const docAnterior = plainToClass(Documento, dataAnterior as Object);
-
     const notificationService = new NotificationService();
-    // Extraemos los tokens de los validadores desde el mapa dentro de cuadrilla.
-    // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
-    const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
-
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.needPlanDeAccion();
     const estadoAnterior =  docAnterior.estado;
-
+    const empresa =  event.params.nombreEmpresa;
+    // Revision si hay cuadrilla y validadores  
+    if (!doc.cuadrilla || !doc.cuadrilla.validadores) {
+        console.log("No hay validadores en la cuadrilla");
+        return;
+    }
+    const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
         if(estadoAnterior === "doc_con_problema"||estadoAnterior === "doc_sin_problema"){
@@ -127,7 +127,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("/empresas/{nombreEmpresa}/g
 export const archivotest = onRequest(async (request: Request, response: Response) => {
 
     try {
-        const doc = Storage.saveFilePDF(empresa,pdfData);
+        const doc = Storage.saveFilePDF("VAKU",pdfData);
         //console.log("ARCHIVO SUBIDO");
         response.send(doc);        
     } catch (error) {

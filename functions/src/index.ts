@@ -5,19 +5,16 @@ import {
 	myfunction,
 	archivotest,
 } from './functions'
+import { myfunctionk } from './functions/flujoIS/test1';
 
-// import { 
-// 	// initCounter, 
-// 	// incrementCounterBy, 
-// 	getCounterValue } from './functions/flujoIS/contadorDistribuido'; 
 // The Firebase Admin SDK to access Firestore.
-const {initializeApp} = require("firebase-admin/app");
+import {initializeApp} from "firebase-admin/app";
 
 initializeApp();
 
 
-export const generarArchivoPRueba = archivotest;//genera Doc
+export const generarArchivoPRueba = archivotest;//generar archivo de prueba
 export const flujoActualizarDocumento = FlujoActualizarPDF;//flujo para cuando se actualiza un documento
 export const flujoGenerarDoc = GenerarDocumento;//flujo para cuando se actualiza un documento
-// export const notification = flujo3;
-export const is2 = myfunction;
+export const contando = myfunctionk;
+export const IS = myfunction;

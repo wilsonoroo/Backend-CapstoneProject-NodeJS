@@ -1,4 +1,5 @@
 import {Documento,} from '../../core/models'
+import {convertDocumentTimestampsToDate} from '../../core/utils/';
 import {FirestoreRepository} from '../../core/services/repository/FirestoreRepository'
 import { EnkiCreator } from '../../core/services/enkiCreator/enkiCreator';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
@@ -16,7 +17,10 @@ export const GenerarDocumento = onDocumentCreated("empresas/{nombreEmpresa}/gere
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     //obtener datos y transformarlo a Documento
     const data = event.data?.data();
-    const doc = plainToClass(Documento, data as Documento);
+    console.log("data:", data?.fechaCreacion);
+    const transformedData = convertDocumentTimestampsToDate(data);
+    const doc = plainToClass(Documento, transformedData);
+    console.log("doc:", doc);
     const notificationService = new NotificationService();
     const needValidacion = doc.needValidacion();
     const needPlanDeAccion = doc.needPlanDeAccion(); 

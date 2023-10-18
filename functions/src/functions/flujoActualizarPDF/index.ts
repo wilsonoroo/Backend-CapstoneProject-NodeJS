@@ -9,7 +9,8 @@ import { onDocumentUpdated,  } from "firebase-functions/v2/firestore";
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
 import { plainToClass } from "class-transformer";
 import * as fs from 'fs';
-
+import {convertDocumentTimestampsToDate} from '../../core/utils/';
+import { logger } from 'firebase-functions/v2';
 
 const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
 
@@ -19,17 +20,21 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     //obtener datos y transformarlo a Documento
     const data = event.data?.after.data();
-    const doc = plainToClass(Documento, data as Documento);
+    const transformedData = convertDocumentTimestampsToDate(data);
+    const doc = plainToClass(Documento, transformedData);
+    logger.log("doc:", doc.id);
     //obtener datos anteriores y transformarlo a Documento
-    const dataAnterior = event.data?.after.data();
-    const docAnterior = plainToClass(Documento, dataAnterior as Documento);
+    const dataAnterior = event.data?.before.data();
+    const transformedData2 = convertDocumentTimestampsToDate(dataAnterior);
+    const docAnterior = plainToClass(Documento, transformedData2);
+    console.log("doc:", docAnterior.id);
     const notificationService = new NotificationService();
     const estadoActual = doc.estado;
     const isPlanDeAccion = doc.isPlanDeAccion;
     const needPlandeAccion = doc.needPlanDeAccion();
     const estadoAnterior =  docAnterior.estado;
     const empresa =  event.params.nombreEmpresa;
-    
+
     // // Revision si hay cuadrilla y validadores  
     // if (!doc.cuadrilla || !doc.cuadrilla.validadores) {
     //     console.log("No hay validadores en la cuadrilla");
@@ -40,10 +45,14 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
 
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
-        if(estadoAnterior === "doc_con_problema"||estadoAnterior === "doc_sin_problema"){
+        if(estadoAnterior === "doc_con_problemas"||estadoAnterior === "doc_sin_problemas"){
             const pdf =EnkiCreator.generarPDF(doc)
             console.log(" pdf:", pdf)
             doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+            //transformar a JSON el documento.pdf   
+            const jsonPDF = JSON.parse(JSON.stringify(doc.pdf))
+            console.log("pdf",jsonPDF)
+            repo.updateDocument(doc.id, {pdf:jsonPDF} );
 
             console.log("EL DOCUMENTO YA SE VALIDO");
             
@@ -55,19 +64,16 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
 
 
             if (isPlanDeAccion){
-                doc.estado = "finalizado"
-                repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+                repo.updateDocument(doc.id, {estado: "finalizado"} );
 
             }
             else{
                 if(needPlandeAccion){
-                    doc.estado = "finalizado_sin_plan_accion"
-                    repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+                    repo.updateDocument(doc.id, {estado: "finalizado_sin_plan_accion"} );
 
                 }
                 else{
-                    doc.estado = "finalizado"
-                    repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+                    repo.updateDocument(doc.id, {estado: "finalizado"} );
 
                 }
             }
@@ -87,28 +93,33 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
 
             if (!isPlanDeAccion){
                 if (needPlandeAccion){
-                    doc.estado = "rechazado_sin_plan_accion";
-                    repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
+                    repo.updateDocument(doc.id, {estado: "rechazado_sin_plan_accion"} );
+
                 }
                 else{
                     //generar PDF luego Enviarlo a la Nube y generar el mensaje
                     const pdf =EnkiCreator.generarPDF(doc)
                     console.log(" pdf:", pdf)
-                    doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
                     console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                     const mensaje = {
                         title: 'Aviso',
                         body: 'El documento generado ha sido rechazado'
                     };
                     await notificationService.sendNotificationMulticast(tokens, mensaje);
-                    repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
 
+                    doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+                    //transformar a JSON el documento.pdf   
+                    const jsonPDF = JSON.parse(JSON.stringify(doc.pdf))
+                    repo.updateDocument(doc.id, {pdf:jsonPDF});
                 }
             }
             else{
                 const pdf =EnkiCreator.generarPDF(doc)
                 console.log(" pdf:", pdf)
                 doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+                //transformar a JSON el documento.pdf   
+                const jsonPDF = JSON.parse(JSON.stringify(doc.pdf))
+                repo.updateDocument(doc.id, {pdf:jsonPDF} );
 
                 console.log("EL DOCUMENTO HA SIDO RECHAZADO");                    
                 const mensaje = {
@@ -116,25 +127,8 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
                     body: '2 El documento generado ha sido rechazado'
                 };
                 await notificationService.sendNotificationMulticast(tokens, mensaje);
-                repo.updateDocument(doc.id, JSON.parse(JSON.stringify(doc)));
-
             }
         }
     }
 })
 
-
-
-//Metodos de prueba de funcionalidaes
-
-// export const archivotest = onRequest(async (request: Request, response: Response) => {
-
-//     try {
-//         const doc = Storage.saveFilePDF("VAKU",pdfData);
-//         //console.log("ARCHIVO SUBIDO");
-//         response.send(doc);        
-//     } catch (error) {
-//         console.error(error);
-//         response.status(500).send('Hubo un error');
-//     }
-// });

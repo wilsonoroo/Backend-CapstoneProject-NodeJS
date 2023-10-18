@@ -1,7 +1,7 @@
 import { firestore } from 'firebase-admin';
 import { Documento } from '../../core/models';
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
-import { getCounterValue, incrementCounterBy, initCounter } from './contadorDistribuido';
+import { getCounterValue, incrementCounterBy, initCounter } from '../../core/services/contadorDistribuido/contadorDistribuido';
 // import { FirestoreRepository } from '../../core/services/repository/FirestoreRepository';
 
 /**

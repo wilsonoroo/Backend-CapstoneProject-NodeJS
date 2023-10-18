@@ -1,4 +1,4 @@
-import { Integrante, Documento } from "../../core/models";
+import { Integrante, Documento } from "../../models";
 
 export function todosHanFirmado(documento: Documento): boolean {
     // Verificar si el documento tiene una cuadrilla

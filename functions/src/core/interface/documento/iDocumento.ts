@@ -1,29 +1,29 @@
 export interface IDocumento<AUTH,CUADRILLA, CHECKLIST, ENCABEZADO, SECCIONRESP, RESPUESTA,ARCHIVO> {
 	id: string;
 	checklist: CHECKLIST;
-	checklistChildren: CHECKLIST;
-	correlativo?: string;
-	cuadrilla?: CUADRILLA; 
+	checklistChildren: CHECKLIST|null;
+	correlativo?: string|null;
+	cuadrilla?: CUADRILLA|null; 
 	emisor: AUTH;
 	encabezado: ENCABEZADO;
 	estado: string;
 	fechaCreacion: Date;
 	fechaSubida?: Date; 
-	fechaValidacion?: Date; 
-	fechaValidacionDobleChequeo?: Date;
-	isAutoValidacion?: boolean;
-	isConCuadrilla?: boolean;
-	isParticipantesCruzados?: boolean;
-	isPlanDeAccion: boolean;
-	pdf?: ARCHIVO; 
+	fechaValidacion?: Date|null; 
+	fechaValidacionDobleChequeo?: Date|null;
+	isAutoValidacion?: boolean|null;
+	isConCuadrilla?: boolean|null;
+	isParticipantesCruzados?: boolean|null;
+	isPlanDeAccion: boolean|null;
+	pdf?: ARCHIVO|null; 
 	respuestasMalas: RESPUESTA[];
 	respuestasMalasChildren: RESPUESTA[];
 	seccionesRespuestas: SECCIONRESP;
-	seccionesRespuestasChildren: SECCIONRESP;
-	seccionesRespuestasValidacion: SECCIONRESP;
-	validadPor?: AUTH;
-	validadoDobleChequeoPor?: AUTH;
-	vistos?: any;
+	seccionesRespuestasChildren: SECCIONRESP|null;
+	seccionesRespuestasValidacion: SECCIONRESP|null;
+	validadPor?: AUTH|null;
+	validadoDobleChequeoPor?: AUTH|null;
+	vistos?: any|null;
 	//metodo para verificar emisor retorna un booleano
 
 	//metodos de documento

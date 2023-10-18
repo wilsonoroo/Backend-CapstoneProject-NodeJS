@@ -10,29 +10,29 @@ import {User} from '../usuario'
 export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabezado, SeccionRespuesta, Respuesta,Archivo> {
 	id: string;
 	checklist: Checklist;
-	checklistChildren: Checklist;
-	correlativo?: string;
-	cuadrilla?: Cuadrilla; 
+	checklistChildren: Checklist|null;
+	correlativo?: string|null;
+	cuadrilla?: Cuadrilla|null; 
 	emisor: User;
 	encabezado: Encabezado;
 	estado: string;
 	fechaCreacion: Date;
 	fechaSubida?: Date; 
-	fechaValidacion?: Date; 
-	fechaValidacionDobleChequeo?: Date;
-	isAutoValidado?: boolean;
-	isConCuadrilla?: boolean;
-	isParticipantesCruzados?: boolean;
-	isPlanDeAccion: boolean;
-	pdf?: Archivo; 
+	fechaValidacion?: Date|null; 
+	fechaValidacionDobleChequeo?: Date| null;
+	isAutoValidado?: boolean|null;
+	isConCuadrilla?: boolean|null;
+	isParticipantesCruzados?: boolean|null;
+	isPlanDeAccion: boolean|null;
+	pdf?: Archivo|null; 
 	respuestasMalas: Respuesta[];
 	respuestasMalasChildren: Respuesta[]; 
 	seccionesRespuestas: SeccionRespuesta;
-	seccionesRespuestasChildren: SeccionRespuesta;
-	seccionesRespuestasValidacion: SeccionRespuesta;
-	validadPor?: User;
-	validadoDobleChequeoPor?: User;
-	vistos?: any;
+	seccionesRespuestasChildren: SeccionRespuesta|null;
+	seccionesRespuestasValidacion: SeccionRespuesta|null;
+	validadPor?: User|null;
+	validadoDobleChequeoPor?: User|null;
+	vistos?: any|null;
 
 	//ver si el documento necesita plan de accion 
 	needPlanDeAccion ():boolean{

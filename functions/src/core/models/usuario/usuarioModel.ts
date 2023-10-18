@@ -35,6 +35,6 @@ export class User implements IUsuario<Enrolamiento, Licencia, Fotografia, Permis
   tipo!: string;  
   turno!: string;
   dispositivos: Dispositivo;
-
+  fechaFirmado!: Date;
 
 }

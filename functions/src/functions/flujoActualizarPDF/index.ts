@@ -29,12 +29,15 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
     const needPlandeAccion = doc.needPlanDeAccion();
     const estadoAnterior =  docAnterior.estado;
     const empresa =  event.params.nombreEmpresa;
-    // Revision si hay cuadrilla y validadores  
-    if (!doc.cuadrilla || !doc.cuadrilla.validadores) {
-        console.log("No hay validadores en la cuadrilla");
-        return;
-    }
-    const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
+    
+    // // Revision si hay cuadrilla y validadores  
+    // if (!doc.cuadrilla || !doc.cuadrilla.validadores) {
+    //     console.log("No hay validadores en la cuadrilla");
+    //     return;
+    // }
+    // const tokens = Object.values(doc.cuadrilla?.validadores).map(validador => validador.codigo);
+    const tokens = ["cr2ZLWDhThGW3XfXwWj3HG:APA91bETvBGlmZPgca1coBw220HbjrBG1FXdTwF2h33rDQ_NUQORU4OLu_CbtRcNNutT_XVFB7y2QxPFOG64odgtS_uDXq4nxPHhsjCPIMia2VcZOgjGmpRXfNStbJ0Eg7aJd-zoStoQ"];
+
 
     if (estadoActual == "finalizado" || estadoActual  == "validado") {
         if(estadoAnterior === "doc_con_problema"||estadoAnterior === "doc_sin_problema"){

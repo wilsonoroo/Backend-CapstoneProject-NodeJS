@@ -28,8 +28,7 @@ export interface IUsuario <Enrolamiento, Licencia, Fotografia, PermisosWeb, Perm
     permisos: PermisosModel;
     tipo: string;  
     turno: string;
-    dispositivos: Dispositivo;
-    fechaFirmado: Date;
+    dispositivos: Dispositivo;   
 
 }
 

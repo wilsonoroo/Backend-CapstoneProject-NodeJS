@@ -5,5 +5,6 @@ export interface IIntegrante{
     nombre: string;
     codigo: string;
     isFirmado: boolean;
+    fechaFirmado: Date;
     // usuario: AUTH;
 }

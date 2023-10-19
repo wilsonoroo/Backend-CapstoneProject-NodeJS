@@ -4,6 +4,7 @@ import {getFirestore} from 'firebase-admin/firestore'
 export class FirestoreRepository<T> implements IRepository<any> {
 	db = getFirestore()
 	reference: string
+	collection: any
 
 	constructor(reference: string) {
 		this.reference = reference
@@ -126,7 +127,7 @@ export class FirestoreRepository<T> implements IRepository<any> {
 				})
 		})
 	}	
-
+	
 	// deleteCollection(collectionName: string): Promise<boolean> {
 	// 	throw new Error('Method not implemented.')
 	// };

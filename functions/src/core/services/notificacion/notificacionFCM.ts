@@ -32,15 +32,6 @@ export default class NotificationService {
         try {
             const response = await admin.messaging().sendMulticast(messages);
             console.log("Mensaje enviado correctamente: ", response);
-            // if (response.failureCount > 0) {
-            //     const failedTokens: string[] = [];
-            //     response.responses.forEach((resp, idx) => {
-            //         if (!resp.success) {
-            //             failedTokens.push(tokens[idx]);
-            //         }
-            //     });
-            //     console.error('Lista de tokens fallidos:', failedTokens);
-            // }
             return { success: true };
     
         } catch (error: any) {

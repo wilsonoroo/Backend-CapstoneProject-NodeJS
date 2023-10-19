@@ -8,4 +8,5 @@ export class Integrante extends User implements IIntegrante{
     nombre: string;
     codigo: string;
     isFirmado: boolean;
+    fechaFirmado!: Date;
 }

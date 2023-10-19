@@ -3,17 +3,18 @@ import { Archivo } from '../archivo'
 import {Checklist} from '../checklist'
 import { Cuadrilla } from '../cuadrilla'
 import {Encabezado} from '../encabezado'
+import { Integrante } from '../integrante'
 import {Respuesta} from '../respuesta'
 import {SeccionRespuesta} from '../seccionRespuesta'
 import {User} from '../usuario'
 
-export class Documento implements IDocumento<User,Cuadrilla, Checklist, Encabezado, SeccionRespuesta, Respuesta,Archivo> {
+export class Documento implements IDocumento< Integrante, User,Cuadrilla, Checklist, Encabezado, SeccionRespuesta, Respuesta,Archivo> {
 	id: string;
 	checklist: Checklist;
 	checklistChildren: Checklist|null;
 	correlativo?: string|null;
 	cuadrilla?: Cuadrilla|null; 
-	emisor: User;
+	emisor: Integrante;
 	encabezado: Encabezado;
 	estado: string;
 	fechaCreacion: Date;

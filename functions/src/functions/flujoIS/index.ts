@@ -38,7 +38,7 @@ export const myfunction = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idG
         console.log("El dumento es tipo IS")
         if (dataAfter.cuadrilla && todosHanFirmado(dataAfter)) {
             console.log("Todos firmaron el documento")
-            // Aquí es donde verificas si todos han firmado en la cuadrilla
+            // verifica si todos han firmado en la cuadrilla
             if (dataAfter.estado == "generado") {
                 // Si todos han firmado y el documento está en estado "generado"
                 repo.updateDocument(docId, {estado: "pendiente_validar"} );

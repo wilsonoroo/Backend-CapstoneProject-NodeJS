@@ -53,51 +53,74 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
                 await updateTotalCounterValue(db, rootPath);
             }
         };
-        const getDocumentFolderPath = (estado: string, emisorId: string): string => {
+        const getDocumentFolderPath = (estado: string, emisorId: string): string[] => {
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/`;
-        
+            let paths: string[] = [];
+            
             if (['estadoA', 'estadoB', 'estadoC'].includes(estado)) {
-                return `${basePath}countABC`;
-            } else if (estado === 'pendiente_doble_chequeo') {
-                return `${basePath}enEsperaDobleChequeo`;
-            } else if (['pendiente_validar', 'doc_con_problema', 'doc_sin_problema'].includes(estado)) {
-                return `${basePath}enEsperaValidacion`;
-            } else if (estado === 'rechazado') {
-                return `${basePath}countrechazados`;
-            } else if (estado === 'finalizado') {
-                return `${basePath}countFinalizado`;
-            } else if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema'].includes(estado)) {
-                return `${basePath}countprocesoFinalizado`;
+                paths = [...paths, `${basePath}countABC`];
             }
-        
-            return basePath; 
+            if (estado === 'pendiente_doble_chequeo') {
+                paths = [...paths, `${basePath}enEsperaDobleChequeo`];
+            }
+            if (['pendiente_validar', 'doc_con_problema', 'doc_sin_problema'].includes(estado)) {
+                paths = [...paths, `${basePath}enEsperaValidacion`];
+            }
+            if (estado === 'rechazado') {
+                paths = [...paths, `${basePath}countrechazados`];
+            }
+            if (estado === 'finalizado') {
+                paths = [...paths, `${basePath}countFinalizado`];
+            }
+            if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema'].includes(estado)) {
+                paths = [...paths, `${basePath}countprocesoFinalizado`];
+            }
+            
+            return paths; 
         };
-        
+
         const emisorId = dataAfter.emisor.id;
+        const integrantes = dataAfter.cuadrilla?.integrantes || {};
+
+        const updateForUser = async (userId: string, oldEstado?: string, newEstado?: string) => {
+            if (oldEstado) {
+                await processCounter(oldEstado, userId, -1);
+                const oldRutasDoc = getDocumentFolderPath(oldEstado, userId);
+                for (const oldRutaDoc of oldRutasDoc) {
+                    const oldRepo = new FirestoreRepository<Documento>(oldRutaDoc);
+                    oldRepo.deleteDocument(event.params.docId);
+                }
+            }
+
+            if (newEstado) {
+                await processCounter(newEstado, userId, 1);
+                const newRutasDoc = getDocumentFolderPath(newEstado, userId);
+                for (const newRutaDoc of newRutasDoc) {
+                    const newRepo = new FirestoreRepository<Documento>(newRutaDoc);
+                    newRepo.addDocumentById(event.params.docId, dataAfter);
+                }
+            }
+        };
 
         if (!dataBefore) {
             console.log(`Documento nuevo detectado con ID: ${event.params.docId}`);
             
-            await processCounter(dataAfter.estado, emisorId, 1);
+            await updateForUser(emisorId, undefined, dataAfter.estado);
             
-            const rutaDoc = getDocumentFolderPath(dataAfter.estado, emisorId);
-            const repo = new FirestoreRepository<Documento>(rutaDoc);
-            repo.addDocumentById(event.params.docId, dataAfter);
+            for (const integranteId in integrantes) {
+                await updateForUser(integranteId, undefined, dataAfter.estado);
+            }
 
         } else if (dataBefore.estado !== dataAfter.estado) {
             console.log(`Cambio de estado detectado en documento ID: ${event.params.docId}. De "${dataBefore.estado}" a "${dataAfter.estado}"`);
             
-            await processCounter(dataBefore.estado, emisorId, -1);
-            await processCounter(dataAfter.estado, emisorId, 1);
-
-            const oldRutaDoc = getDocumentFolderPath(dataBefore.estado, emisorId);
-            const oldRepo = new FirestoreRepository<Documento>(oldRutaDoc);
-            oldRepo.deleteDocument(event.params.docId);
-
-            const newRutaDoc = getDocumentFolderPath(dataAfter.estado, emisorId);
-            const newRepo = new FirestoreRepository<Documento>(newRutaDoc);
-            newRepo.addDocumentById(event.params.docId, dataAfter);
+            await updateForUser(emisorId, dataBefore.estado, dataAfter.estado);
+            
+            for (const integranteId in integrantes) {
+                await updateForUser(integranteId, dataBefore.estado, dataAfter.estado);
+            }
         }
+
     } catch (error) {
         console.error(`Error al procesar el documento ID: ${event.params.docId}. Detalle del error:`, error);
     }

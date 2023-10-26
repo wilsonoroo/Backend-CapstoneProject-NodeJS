@@ -74,6 +74,7 @@ export const escuchando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idG
         } else if (dataAfter.cuadrilla && !todosHanFirmado(dataAfter)) {
             console.log("Faltan firmas en la cuadrilla.");
             //NOTIFICAR LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR
+            
         }
     }else {
         console.log("El documento no es IS")        

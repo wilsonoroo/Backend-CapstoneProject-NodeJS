@@ -8,6 +8,7 @@
 // The Firebase Admin SDK to access Firestore.
 import {initializeApp} from "firebase-admin/app";
 import { contando } from "./functions/global/contadornew";
+import { agregarDocumento } from "./functions/global/agregarUndocumento";
 // import { escuchando } from './functions/flujoIS/t1';
 
 initializeApp();
@@ -22,3 +23,7 @@ initializeApp();
 // export const probando = escuchando;
 
 export const test1 = contando
+
+
+
+export const addDoc = agregarDocumento;

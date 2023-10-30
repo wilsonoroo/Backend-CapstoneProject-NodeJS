@@ -3,8 +3,10 @@ import { Documento } from '../../core/models';
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import {  getCounterValue, incrementCounterBy, initCounter } from '../../core/services/contadorDistribuido/contadorDistribuido';
 import { FirestoreRepository } from '../../core/services/repository/FirestoreRepository';
-
-
+/**
+ * Función Cloud de Firebase que se dispara cuando se escribe un documento en la ruta especificada (creado, actualizado o eliminado).
+ * Principalmente se usa para administrar contadores distribuidos en base al estado de los datos del "Documento".
+ */
 export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentos/{docId}", async(event) => {
     try {
         const snapshot = event.data;
@@ -19,7 +21,7 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
         
         const db = firestore(); 
         const numShards = 10; 
-
+        // Obtener las rutas de los contadores basados en el estado y el ID del emisor.
         const getCountPaths = (estado: string, emisorId: string): string[] => {
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/contadores/`;
             let paths: string[] = [];        
@@ -44,15 +46,7 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
             
             return paths;
         };
-
-        const processCounter = async (estado: string, emisorId: string, factor: number) => {
-            const rootPaths = getCountPaths(estado, emisorId);
-            for (const rootPath of rootPaths) {
-                await initCounter(db, rootPath, numShards);
-                await incrementCounterBy(db, rootPath, numShards, factor);
-                await updateTotalCounterValue(db, rootPath);
-            }
-        };
+        // Obtiene la ruta de la carpeta del documento basada en el estado y el ID del emisor.
         const getDocumentFolderPath = (estado: string, emisorId: string): string[] => {
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/`;
             let paths: string[] = [];
@@ -78,30 +72,44 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
             
             return paths; 
         };
-
-        const emisorId = dataAfter.emisor.id;
-        const integrantes = dataAfter.cuadrilla?.integrantes || {};
-
-        const updateForUser = async (userId: string, oldEstado?: string, newEstado?: string) => {
-            if (oldEstado) {
-                await processCounter(oldEstado, userId, -1);
-                const oldRutasDoc = getDocumentFolderPath(oldEstado, userId);
-                for (const oldRutaDoc of oldRutasDoc) {
-                    const oldRepo = new FirestoreRepository<Documento>(oldRutaDoc);
-                    oldRepo.deleteDocument(event.params.docId);
-                }
+        // Procesa y actualiza los valores del contador.
+        const processCounter = async (estado: string, emisorId: string, factor: number) => {
+            const rootPaths = getCountPaths(estado, emisorId);
+            for (const rootPath of rootPaths) {
+                await initCounter(db, rootPath, numShards);
+                await incrementCounterBy(db, rootPath, numShards, factor);
+                await updateTotalCounterValue(db, rootPath);
             }
-
-            if (newEstado) {
-                await processCounter(newEstado, userId, 1);
-                const newRutasDoc = getDocumentFolderPath(newEstado, userId);
-                for (const newRutaDoc of newRutasDoc) {
-                    const newRepo = new FirestoreRepository<Documento>(newRutaDoc);
-                    newRepo.addDocumentById(event.params.docId, dataAfter);
+        };
+        /** Manipula documentos en Firestore basado en el estado, emisor y acción especificados. */
+        const processDocument = async (estado: string, emisorId: string, action: 'add' | 'delete') => {
+            const documentPaths = getDocumentFolderPath(estado, emisorId);
+            for (const docPath of documentPaths) {
+                const repo = new FirestoreRepository<Documento>(docPath);
+                if (action === 'add') {
+                    repo.addDocumentById(event.params.docId, dataAfter);
+                } else if (action === 'delete') {
+                    repo.deleteDocument(event.params.docId);
                 }
             }
         };
 
+        const emisorId = dataAfter.emisor.id;
+        const integrantes = dataAfter.cuadrilla?.integrantes || {};
+        // Actualiza el documento y los contadores para un usuario específico.
+        const updateForUser = async (userId: string, oldEstado?: string, newEstado?: string) => {
+            if (oldEstado) {
+                await processCounter(oldEstado, userId, -1);
+                await processDocument(oldEstado, userId, 'delete');
+            }
+
+            if (newEstado) {
+                await processCounter(newEstado, userId, 1);
+                await processDocument(newEstado, userId, 'add');
+            }
+        };
+
+        // Lógica para determinar si el documento es nuevo o si ha cambiado su estado, y actuar en consecuencia.
         if (!dataBefore) {
             console.log(`Documento nuevo detectado con ID: ${event.params.docId}`);
             

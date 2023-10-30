@@ -31,7 +31,7 @@ export const agregarDocumento = https.onRequest(async (req: Request, res: Respon
 
   // Agregar documento a Firestore
   try {
-    await repository.addDocumentById('DOC4', documento);
+    await repository.addDocumentById('pendiente_validar', documento);
     res.status(200).send({ success: true, message: 'Documento agregado con éxito' });
   } catch (error) {
     console.error('Error agregando el documento:', error);

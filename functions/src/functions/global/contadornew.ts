@@ -25,23 +25,23 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
         const getCountPaths = (estado: string, emisorId: string): string[] => {
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/contadores/`;
             let paths: string[] = [];        
-            if (['estadoA', 'estadoB', 'estadoC'].includes(estado)) {
-                paths = [...paths, basePath + `countABC`];
+            if (['doc_sin_problemas', 'doc_con_problemas', 'pendiente_validar', 'pendiente_doble_chequeo'].includes(estado)) {
+                paths = [...paths, basePath + `countEnviadosHSEQ`];
+            }
+            if (['pendiente_validar', 'doc_con_problemas', 'doc_sin_problemas'].includes(estado)) {
+                paths = [...paths, basePath + `countEnEsperaValidacion`, basePath + `countPorValidar`];
             }
             if (['pendiente_doble_chequeo'].includes(estado)) {
-                paths = [...paths, basePath + `countenEsperaDobleChequeo`];
-            }
-            if (['pendiente_validar', 'doc_con_problema', 'doc_sin_problema'].includes(estado)) {
-                paths = [...paths, basePath + `countenEsperaValidacion`, basePath + `countporValidar`];
+                paths = [...paths, basePath + `countEnEsperaDobleChequeo`];
             }
             if (['rechazado'].includes(estado)) {
-                paths = [...paths, basePath + `countrechazados`];
+                paths = [...paths, basePath + `countRechazados`];
             }
-            if (['finalizado'].includes(estado)) {
-                paths = [...paths, basePath + `countFinalizado`];
+            if (['finalizado_sin_plan_accion', 'doc_con_problemas'].includes(estado)) {
+                paths = [...paths, basePath + `countProcesoPendiente`];
             }
             if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema'].includes(estado)) {
-                paths = [...paths, basePath + `countprocesoFinalizado`];
+                paths = [...paths, basePath + `countProcesoFinalizado`, basePath + 'countFinalizado'];
             }
             
             return paths;
@@ -51,23 +51,23 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/`;
             let paths: string[] = [];
             
-            if (['estadoA', 'estadoB', 'estadoC'].includes(estado)) {
-                paths = [...paths, `${basePath}countABC`];
+            if (['doc_sin_problemas', 'doc_con_problemas', 'pendiente_validar', 'pendiente_doble_chequeo'].includes(estado)) {
+                paths = [...paths, `${basePath}enviadosHSEQ`];
+            }
+            if (['pendiente_validar', 'doc_con_problema', 'doc_sin_problema'].includes(estado)) {
+                paths = [...paths, `${basePath}enEsperaValidacion`, basePath + `porValidar`];
             }
             if (estado === 'pendiente_doble_chequeo') {
                 paths = [...paths, `${basePath}enEsperaDobleChequeo`];
             }
-            if (['pendiente_validar', 'doc_con_problema', 'doc_sin_problema'].includes(estado)) {
-                paths = [...paths, `${basePath}enEsperaValidacion`];
-            }
             if (estado === 'rechazado') {
-                paths = [...paths, `${basePath}countrechazados`];
+                paths = [...paths, `${basePath}rechazados`];
             }
-            if (estado === 'finalizado') {
-                paths = [...paths, `${basePath}countFinalizado`];
+            if (['finalizado_sin_plan_accion', 'doc_con_problemas'].includes(estado)) {
+                paths = [...paths, `${basePath}procesoPendiente`];
             }
             if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema'].includes(estado)) {
-                paths = [...paths, `${basePath}countprocesoFinalizado`];
+                paths = [...paths, `${basePath}countprocesoFinalizado`, basePath + 'finalizado'];
             }
             
             return paths; 
@@ -141,7 +141,7 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
  */
 async function updateTotalCounterValue(db: firestore.Firestore, rootPath: string) {
     const totalCount = await getCounterValue(db, rootPath);
-    const totalCounterFieldName = `total${rootPath.split('/').pop()}`;
+    const totalCounterFieldName = `${rootPath.split('/').pop()}`;
     const docPath = rootPath.substring(0, rootPath.lastIndexOf('/contadores/'));
     
     const docRef = db.doc(docPath);

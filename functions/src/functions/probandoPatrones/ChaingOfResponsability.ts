@@ -1,6 +1,6 @@
 import {Documento,} from '../../core/models'
 
-interface Handler {
+export interface Handler {
     setNext(handler: Handler): Handler;
     handle(documento: Documento): void;
 }
@@ -31,5 +31,29 @@ export class HandlerProblemas extends AbstractHandler {
         }
         console.log('doc sin problemas');
         return false;
+    }
+}
+export class HandlerPlanAccion extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        console.log('con plan de accion');
+        return true;
+    }
+}
+export class HandlerGenerarPDF extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        console.log('generando pdf');
+        return true;
+    }
+}
+export class HandlerNotificacion extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        console.log('enviando notificacion');
+        return true;
+    }
+}
+export class HandlerCambioEstado extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        console.log('CAMBIANDO ESTADO');
+        return true;
     }
 }

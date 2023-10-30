@@ -13,36 +13,41 @@ export abstract class Handler {
         }
         return handler;
     }
-    abstract handle(documento: Documento): void;
+    abstract handle(documento: Documento): boolean;
 }
 
 
 export class HandlerNeedValidacion extends Handler {
-    handle(documento: Documento): void {
+    handle(documento: Documento): boolean {
         if (documento.needValidacion()) {
             console.log('el doc necesita validacion');
             if (this.nextHandler && this.nextHandler[0]) {
                 this.nextHandler[0].handle(documento);
-            
+                return true;
             }
         }
         else{
             if (this.nextHandler && this.nextHandler[1] ) {
                 console.log('el doc no necesita validacion');
                 this.nextHandler[1].handle(documento);
+                return false;
             }
+            return false;
         }
+        return false;
         //negativo [positivo,negativo,otro]
     }
 }
 
 export class HandlerProblemas extends Handler {
-    handle(documento: Documento): void {
+    handle(documento: Documento): boolean {
         if (documento.DocumentoConProblemas()) {
             if (this.nextHandler ) {
                 this.nextHandler[0].handle(documento);
+                return true;
             }
         }
+        return false;
         console.log('doc sin problemas');
     }
 }

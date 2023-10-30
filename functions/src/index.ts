@@ -12,7 +12,7 @@ import {initializeApp} from "firebase-admin/app";
 // import { generarDoc } from "./functions";
 import { arboltest } from "./functions/probandoPatrones/arbol";
 import { generarDoc } from "./functions/test";
-import { flujoHandler } from "./functions/probandoPatrones/arbolesBinarios";
+import { flujoHandler, handler } from "./functions/probandoPatrones/arbolesBinarios";
 initializeApp();
 
 
@@ -27,3 +27,4 @@ initializeApp();
 export const doc = generarDoc;
 export const arbol = arboltest;
 export const flujo = flujoHandler;
+export const caseuse=handler;

@@ -54,6 +54,7 @@ import { Documento } from '../../core/models';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { plainToClass } from 'class-transformer';
 import { convertDocumentTimestampsToDate } from '../../core/utils';
+import { procesarDocumento } from '../../core/caseUse/generarDoc';
 
 export const arboltest =onRequest(async (request: Request, response: Response) => {
     const arbol = new ArbolBinario();
@@ -87,4 +88,11 @@ export const flujoHandler = onDocumentCreated("empresas/{nombreEmpresa}/gerencia
     // arbol.insertarNodo([validacion,problemas]);
     arbol.insertarNodo([validacion,generarPDF,notificacion,planAccion,cambioEstado,null,null,cambioEstado,null,null,null,null,problemas,cambioEstado,notificacion,null,null,null,cambioEstado,notificacion]);
     arbol.procesarDocumento(doc);
+})
+export const handler = onDocumentCreated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
+    const data = event.data?.data();
+    const transformedData = convertDocumentTimestampsToDate(data);
+    const doc = plainToClass(Documento, transformedData);
+    console.log("--------caso de uso ----->");
+    procesarDocumento(doc);
 })

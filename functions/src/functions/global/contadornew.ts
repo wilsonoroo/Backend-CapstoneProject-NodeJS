@@ -25,7 +25,7 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
         const getCountPaths = (estado: string, emisorId: string): string[] => {
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/contadores/`;
             let paths: string[] = [];        
-            if (['doc_sin_problemas', 'doc_con_problemas', 'pendiente_validar', 'pendiente_doble_chequeo'].includes(estado)) {
+            if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema', 'finalizado_sin_plan_accion'].includes(estado)) {
                 paths = [...paths, basePath + `countEnviadosHSEQ`];
             }
             if (['pendiente_validar', 'doc_con_problemas', 'doc_sin_problemas'].includes(estado)) {
@@ -40,7 +40,7 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
             if (['finalizado_sin_plan_accion', 'doc_con_problemas'].includes(estado)) {
                 paths = [...paths, basePath + `countProcesoPendiente`];
             }
-            if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema'].includes(estado)) {
+            if (['finalizado'].includes(estado)) {
                 paths = [...paths, basePath + `countProcesoFinalizado`, basePath + 'countFinalizado'];
             }
             
@@ -51,10 +51,10 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
             const basePath = `empresas/${event.params.idEmpresa}/gerencias/${event.params.idGerencia}/divisiones/${event.params.idDivision}/documentosUsuarios/${emisorId}/`;
             let paths: string[] = [];
             
-            if (['doc_sin_problemas', 'doc_con_problemas', 'pendiente_validar', 'pendiente_doble_chequeo'].includes(estado)) {
-                paths = [...paths, `${basePath}enviadosHSEQ`];
+            if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema', 'finalizado_sin_plan_accion'].includes(estado)) {
+                paths = [...paths, `${basePath}enviadoHSEQ`];
             }
-            if (['pendiente_validar', 'doc_con_problema', 'doc_sin_problema'].includes(estado)) {
+            if (['pendiente_validar', 'doc_con_problemas', 'doc_sin_problemas'].includes(estado)) {
                 paths = [...paths, `${basePath}enEsperaValidacion`, basePath + `porValidar`];
             }
             if (estado === 'pendiente_doble_chequeo') {
@@ -66,8 +66,8 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
             if (['finalizado_sin_plan_accion', 'doc_con_problemas'].includes(estado)) {
                 paths = [...paths, `${basePath}procesoPendiente`];
             }
-            if (['finalizado', 'finalizado_con_problema', 'finalizado_sin_problema'].includes(estado)) {
-                paths = [...paths, `${basePath}countprocesoFinalizado`, basePath + 'finalizado'];
+            if (['finalizado'].includes(estado)) {
+                paths = [...paths, `${basePath}procesoFinalizado`, basePath + 'finalizado'];
             }
             
             return paths; 
@@ -96,16 +96,25 @@ export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGer
 
         const emisorId = dataAfter.emisor.id;
         const integrantes = dataAfter.cuadrilla?.integrantes || {};
+
+        
+        const processedUsersForOldState = new Set<string>();
+        const processedUsersForNewState = new Set<string>();
+        
         // Actualiza el documento y los contadores para un usuario específico.
         const updateForUser = async (userId: string, oldEstado?: string, newEstado?: string) => {
-            if (oldEstado) {
+            // Verifica si el estado anterior del usuario ya ha sido procesado
+            if (oldEstado && !processedUsersForOldState.has(userId)) {
                 await processCounter(oldEstado, userId, -1);
                 await processDocument(oldEstado, userId, 'delete');
+                processedUsersForOldState.add(userId);
             }
 
-            if (newEstado) {
+            // Verifica si el nuevo estado del usuario ya ha sido procesado
+            if (newEstado && !processedUsersForNewState.has(userId)) {
                 await processCounter(newEstado, userId, 1);
                 await processDocument(newEstado, userId, 'add');
+                processedUsersForNewState.add(userId);
             }
         };
 

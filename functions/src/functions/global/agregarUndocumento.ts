@@ -9,17 +9,20 @@ export const agregarDocumento = https.onRequest(async (req: Request, res: Respon
   
   const cuadrillaPredeterminada = {
     integrantes: {
-      i1: {
+      user11: {
         nombre: "wilson"
+      },
+      user21:{
+        nombre: "miguel"
       }
     }
   };
   
   const emisorPredeterminado = {
-    id: "user2"
+    id: "user11"
   };
 
-  const estadoDelDocumento = "finalizado";
+  const estadoDelDocumento = "pendiente_validar";
 
   const documento = {
     cuadrilla: cuadrillaPredeterminada,
@@ -31,7 +34,7 @@ export const agregarDocumento = https.onRequest(async (req: Request, res: Respon
 
   // Agregar documento a Firestore
   try {
-    await repository.addDocumentById('pendiente_validar', documento);
+    await repository.addDocumentById('doc5', documento);
     res.status(200).send({ success: true, message: 'Documento agregado con éxito' });
   } catch (error) {
     console.error('Error agregando el documento:', error);

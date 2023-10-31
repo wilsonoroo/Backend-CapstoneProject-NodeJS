@@ -1,12 +1,19 @@
 import { Documento } from "../../models";
-import { FirestoreRepository, } from "../../services";
+import { EnkiCreator, FirestoreRepository, Storage } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
-import { AbstractHandler, mensaje } from "../../utils";
+import { AbstractHandler, convertDocumentDatesToTimestamps, mensaje } from "../../utils";
 
 export class HandlerGenerarPDF extends AbstractHandler {
+    empresa: string;
+    constructor(empresa: string) {
+        super();
+        this.empresa = empresa;    
+    }
     handle(documento: Documento): boolean {
         //enki_creator
-        //manadar al storage 
+        const pdfData = EnkiCreator.generarPDF(documento);//falta la logica de enkicreator
+        //manadar al storage
+        documento.pdf = Storage.saveFilePDF(this.empresa,pdfData);//enviar a storage el documento
         //actualizar doc con el archivo
         console.log('generando pdf');
         return true;
@@ -38,6 +45,7 @@ export class HandlerUpdateDocument extends AbstractHandler{
         this.repositorio = repositorio; 
     }
     handle(documento: Documento): boolean {
+        convertDocumentDatesToTimestamps(documento);
         this.repositorio.updateDocument(documento.id, JSON.parse(JSON.stringify(documento)));
         console.log('actualizando documento en la base de datos');
         return true;

@@ -98,5 +98,6 @@ export const handler = onDocumentCreated("empresas/{nombreEmpresa}/gerencias/{no
     console.log("--------caso de uso ----->");
     const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
     const repo = new FirestoreRepository<Documento>(rutaDoc);
-    procesarDocumento(doc,repo);
+    const empresa = event.params.nombreEmpresa;
+    procesarDocumento(doc,repo,empresa);
 })

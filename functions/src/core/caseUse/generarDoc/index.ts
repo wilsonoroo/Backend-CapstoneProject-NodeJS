@@ -16,7 +16,7 @@ function FlujoGenerarDoc(repo: FirestoreRepository<Documento>): ArbolBinario {
     const validacion = new HandlerNeedValidacion();
     const planAccion = new HandlerPlanAccion();
     const generarPDF = new HandlerGenerarPDF();
-    const notificacion = new HandlerNotificacion();
+    const notificacion = new HandlerNotificacion("mensaje","notificacion de prueba");
     const estadoConProblemas = new HandlerCambioEstado(DocumentoEstado.conProblemas);
     const estadoSinProblemas = new HandlerCambioEstado(DocumentoEstado.sinProblemas);
     const estadoFinalizado = new HandlerCambioEstado(DocumentoEstado.finalizado);

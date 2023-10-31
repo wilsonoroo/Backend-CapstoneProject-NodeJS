@@ -88,6 +88,7 @@ export const flujoHandler = onDocumentCreated("empresas/{nombreEmpresa}/gerencia
     const cambioEstado = new HandlerCambioEstado();
     // arbol.insertarNodo([validacion,problemas]);
     arbol.insertarNodo([validacion,generarPDF,notificacion,planAccion,cambioEstado,null,null,cambioEstado,null,null,null,null,problemas,cambioEstado,notificacion,null,null,null,cambioEstado,notificacion]);
+    // arbol.insertarNodo([validacion,problemas,]);
     arbol.procesarDocumento(doc);
 })
 export const handler = onDocumentCreated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {

@@ -1,12 +1,13 @@
 import { Documento } from "../../models";
-import { FirestoreRepository } from "../../services/repository/FirestoreRepository";
-import { ArbolBinario } from "../../utils";
+import { FirestoreRepository } from "../../services";
+import { ArbolBinario, DocumentoEstado } from "../../utils";
 import { HandlerNeedValidacion, 
     HandlerPlanAccion, 
     HandlerProblemas, 
     HandlerGenerarPDF, 
     HandlerNotificacion,
-    HandlerUpdateDocument, 
+    // HandlerUpdateDocument,
+    HandlerCambioEstado, 
     } from "../builder";
 
 function FlujoGenerarDoc(repo: FirestoreRepository<Documento>): ArbolBinario {
@@ -16,9 +17,14 @@ function FlujoGenerarDoc(repo: FirestoreRepository<Documento>): ArbolBinario {
     const planAccion = new HandlerPlanAccion();
     const generarPDF = new HandlerGenerarPDF();
     const notificacion = new HandlerNotificacion();
-    const cambioEstado = new HandlerUpdateDocument(repo);
-    // arbol.insertarNodo([validacion,problemas]);
-    arbol.insertarNodo([validacion,generarPDF,notificacion,planAccion,cambioEstado,null,null,cambioEstado,null,null,null,null,problemas,cambioEstado,notificacion,null,null,null,generarPDF,notificacion]);
+    const estadoConProblemas = new HandlerCambioEstado(DocumentoEstado.conProblemas);
+    const estadoSinProblemas = new HandlerCambioEstado(DocumentoEstado.sinProblemas);
+    const estadoFinalizado = new HandlerCambioEstado(DocumentoEstado.finalizado);
+    const estadoFinalizadoPlan = new HandlerCambioEstado(DocumentoEstado.finalizadoPlan);
+    const estadoValidado = new HandlerCambioEstado(DocumentoEstado.validado);
+
+    // arbol.insertarNodo([validacion,generarPDF,notificacion,estadoValidado,planAccion,estadoFinalizadoPlan,null,null,estadoFinalizado,null,null,null,null,null,problemas,estadoConProblemas,notificacion,null,null,null,estadoSinProblemas,notificacion]);
+    arbol.insertarNodo([validacion,problemas,estadoConProblemas,notificacion,null,null,null,estadoSinProblemas,notificacion,null,null,null,generarPDF,notificacion,estadoValidado,planAccion,estadoFinalizado,null,null,estadoFinalizadoPlan]);
     return arbol;
 }
 export function procesarDocumento(doc: Documento,repo: FirestoreRepository<Documento>) {

@@ -10,7 +10,7 @@ export function crearDoc(): Documento {
 	user.id = 'idUsuarios';
 	user.email = 'idUsuarios@gmail.com';
 	const doc = new Documento();
-	doc.id = 'd3';
+	doc.id = 'd1';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = true;
@@ -24,7 +24,7 @@ export function crearDoc(): Documento {
 	checklist.descripcion = 'descripcionChecklist';
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
-	configuracion.needValidacion = true;
+	configuracion.needValidacion = false;
 	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;

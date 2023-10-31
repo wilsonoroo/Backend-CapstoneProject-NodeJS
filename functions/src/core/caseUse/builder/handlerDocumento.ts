@@ -47,3 +47,17 @@ export class HandlerPlanAccion extends AbstractHandler {
 export function cambiarEstado(nuevoEstado: string,doc: Documento)  {
     doc.estado = nuevoEstado;
 }
+export class HandlerCambioEstado extends AbstractHandler {
+    estado: string;
+
+    constructor(estado: string) {
+        super();
+        this.estado = estado;
+    }
+
+    handle(documento: Documento): boolean {
+        console.log(`Cambiando estado del documento a: ${this.estado}`);
+        documento.estado = this.estado;
+        return true; 
+    }
+}

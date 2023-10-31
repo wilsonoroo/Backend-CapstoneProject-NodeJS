@@ -25,7 +25,7 @@ export function crearDoc(): Documento {
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
 	configuracion.needValidacion = false;
-	configuracion.needPlanDeAccion = true;
+	configuracion.needPlanDeAccion = false;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;
 	checklist.configuracion = configuracion;	
@@ -55,7 +55,7 @@ export function crearDoc(): Documento {
 	respuestaC2.contenido = 'contenidoChito2';
 	respuestaC2.titulo = 'tituloChiquito2';
 	respuestaC2.tipo = 'tipoChiquito2';
-	doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
+	// doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
 	doc.respuestasMalasChildren.push(respuestaC1,respuestaC2);
 	
 	

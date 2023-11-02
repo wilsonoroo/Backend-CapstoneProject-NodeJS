@@ -2,7 +2,8 @@ import { Documento } from "../../models";
 // import { EnkiCreator, FirestoreRepository, Storage } from "../../services";
 import {  FirestoreRepository,  } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
-import { AbstractHandler, convertDocumentDatesToTimestamps, mensaje } from "../../utils";
+import {  convertDocumentDatesToTimestamps, mensaje } from "../../utils";
+import { AbstractHandler } from "./chainOfResponsability";
 
 export class HandlerGenerarPDF extends AbstractHandler {
     empresa: string;

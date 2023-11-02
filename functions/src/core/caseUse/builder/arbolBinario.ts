@@ -38,7 +38,25 @@ export class ArbolBinario{
         if (!nodo) return false;
     
         // Procesa el nodo actual
-        const resultadoActual = nodo.valor.handle(documento);
+        const resultadoActual = nodo.valor.handle(documento);//ver como agregar el estado anterior
+    
+        if (resultadoActual) {
+            // Si el resultado es verdadero, procesamos el nodo izquierdo
+            return this.recorrerArbol(nodo.izquierda, documento);
+        } else {
+            // Si el resultado es falso, procesamos el nodo derecho
+            return this.recorrerArbol(nodo.derecha, documento);
+        }
+    }
+    procesarDocumentoA(documento: Documento,documentoAnterior:Documento): boolean {
+        return this.recorrerArbolA(this.root, documento,documentoAnterior);
+    }
+    
+    private recorrerArbolA(nodo: Nodo | null, documento: Documento,DocumentoAnterior:Documento): boolean {
+        if (!nodo) return false;
+    
+        // Procesa el nodo actual
+        const resultadoActual = nodo.valor.handle(documento,DocumentoAnterior);//ver como agregar el estado anterior
     
         if (resultadoActual) {
             // Si el resultado es verdadero, procesamos el nodo izquierdo

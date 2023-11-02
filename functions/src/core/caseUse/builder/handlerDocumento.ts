@@ -1,5 +1,5 @@
 import { Documento } from "../../models";
-import { AbstractHandler } from "../../utils";
+import { AbstractHandler } from "./chainOfResponsability";
 
 export class HandlerNeedValidacion extends AbstractHandler {
     handle(documento: Documento): boolean {
@@ -23,7 +23,7 @@ export class HandlerProblemas extends AbstractHandler {
     }
 }
 
-export class HandlerPlanAccion extends AbstractHandler {
+export class HandlerNeedPlanAccion extends AbstractHandler {
     handle(documento: Documento): boolean {
         if (documento.needPlanDeAccion()){
             console.log('necesita plan de accion');
@@ -46,5 +46,70 @@ export class HandlerCambioEstado extends AbstractHandler {
         console.log(`Cambiando estado del documento a: ${this.estado}`);
         documento.estado = this.estado;
         return true; 
+    }
+}
+export class HandlerEstadoActual extends AbstractHandler{
+    estado: string;
+    estado2?: string;
+    constructor(estado: string,estado2?: string) {
+        super();
+        this.estado = estado;
+        if (estado2) this.estado2 = estado2;
+    }
+    handle(documento: Documento): boolean {
+        try{
+            if(this.estado2){
+                if(this.estado === documento.estado || this.estado2 === documento.estado){
+                    return true;
+                }
+            }else if(this.estado === documento.estado){
+                return true;
+            }
+            return false;
+        }catch(error){
+            console.log("Falla en el handler de estado actual: ",error);
+            return false;
+        }
+
+    }
+}
+export class HandlerEstadoAnterior extends AbstractHandler{
+    estado: string;
+    estado2?: string;
+    constructor(estado: string,estado2?: string) {
+        super();
+        this.estado = estado;
+        if (estado2) this.estado2 = estado2;
+    }
+    handle(documento: Documento,documentoAnterior?: Documento): boolean {
+        try{
+            if (!documentoAnterior) return false;
+            if(this.estado2){
+                if(this.estado === documentoAnterior.estado || this.estado2 === documentoAnterior.estado){
+                    return true;
+                }
+            }else if(this.estado === documentoAnterior.estado){
+                return true;
+            }
+            return false;
+        }catch(error){
+            console.log("Falla en el handler de estado anterior: ",error);
+            return false;
+        }
+
+    }
+}
+export class HandlerTienePlanAccion extends AbstractHandler{
+    handle(documento: Documento): boolean {
+        try{
+            if(documento.isPlanDeAccion){
+                return true;
+            }
+            return false;
+        }catch(error){
+            console.log("Falla en el handler de tiene plan de accion: ",error);
+            return false;
+        }
+
     }
 }

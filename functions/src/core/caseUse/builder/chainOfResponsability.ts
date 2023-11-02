@@ -11,4 +11,5 @@ export abstract class AbstractHandler implements Handler{
         return handler;
     }
     abstract handle(documento: Documento):boolean;
+    abstract handle(documento: Documento,DocumentoAnterior?:Documento):boolean;
 }

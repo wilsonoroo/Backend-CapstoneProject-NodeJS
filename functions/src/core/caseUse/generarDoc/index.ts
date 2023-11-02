@@ -1,12 +1,13 @@
 import { Documento } from "../../models";
 import { FirestoreRepository } from "../../services";
-import { ArbolBinario, DocumentoEstado } from "../../utils";
-import { HandlerNeedValidacion, 
-    HandlerPlanAccion, 
+import {  DocumentoEstado } from "../../utils";
+import { 
+    ArbolBinario,
+    HandlerNeedValidacion, 
+    HandlerNeedPlanAccion, 
     HandlerProblemas, 
     HandlerGenerarPDF, 
     HandlerNotificacion,
-    // HandlerUpdateDocument,
     HandlerCambioEstado,
     HandlerUpdateDocument, 
     } from "../builder";
@@ -15,14 +16,12 @@ function FlujoGenerarDoc(repo: FirestoreRepository<Documento>,empresa:string): A
     const arbol = new ArbolBinario();
     const problemas = new HandlerProblemas();
     const validacion = new HandlerNeedValidacion();
-    const planAccion = new HandlerPlanAccion();
+    const planAccion = new HandlerNeedPlanAccion();
     const generarPDF = new HandlerGenerarPDF(empresa);
     const notificacionPDF = new HandlerNotificacion("Generación de PDF","Se generó el PDF del documento");
     const notificacionTieneProblemas = new HandlerNotificacion("Importante","El documento generado tiene problemas");
     const notificacionSinProblemas = new HandlerNotificacion("Aviso","El documento generado no tiene problemas");
-    // const notificacion = new HandlerNotificacion("mensaje","notificacion de prueba");
     const updatear = new HandlerUpdateDocument(repo);
-    // console.log("updatear",updatear);//falta implementarlo en el flujo
     const estadoConProblemas = new HandlerCambioEstado(DocumentoEstado.conProblemas);
     const estadoSinProblemas = new HandlerCambioEstado(DocumentoEstado.sinProblemas);
     const estadoFinalizado = new HandlerCambioEstado(DocumentoEstado.finalizado);

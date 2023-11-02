@@ -1,6 +1,5 @@
 import { Documento } from "../../models";
-import { AbstractHandler } from "../../utils";
-import { CustomError } from "../../utils/customError/CustomError";
+import { AbstractHandler } from "./chainOfResponsability";
 
 export class HandlerNeedValidacion extends AbstractHandler {
     handle(documento: Documento): boolean {
@@ -9,12 +8,11 @@ export class HandlerNeedValidacion extends AbstractHandler {
                 console.log('el doc necesita validacion');
                 return true;
             }
-            cambiarEstado('validado', documento);
             console.log('el doc no necesita validacion');
             return false;
         } catch (error) {
-            const customError = new CustomError('Error en HandlerNeedValidacion', "Error al validar el documento.");
-            console.error(customError.toString(), error);
+            // const customError = new CustomError('Error en HandlerNeedValidacion', "Error al validar el documento.");
+            // console.error(customError.toString(), error);
             return false;
         }
     }
@@ -22,52 +20,24 @@ export class HandlerNeedValidacion extends AbstractHandler {
 
 export class HandlerProblemas extends AbstractHandler {
     handle(documento: Documento): boolean {
-        try {
-            if (documento.DocumentoConProblemas()) {
-                console.log('doc con problemas');
-                cambiarEstado('doc_con_problemas',documento);
-                return true;
-            }
-            cambiarEstado('doc_sin_problemas',documento);
-            console.log('doc sin problemas');
-            return false;            
-        } catch (error) {
-            const customError = new CustomError('Error en HandlerProblemas', "Error al comprobar problemas en el documento.");
-            console.error(customError.toString(), error);
-            return false;
-            
+        if (documento.DocumentoConProblemas()) {
+            console.log('doc con problemas');
+            return true;
         }
+        console.log('doc sin problemas');
+        return false;
     }
 }
 
-export class HandlerPlanAccion extends AbstractHandler {
+export class HandlerNeedPlanAccion extends AbstractHandler {
     handle(documento: Documento): boolean {
-        try {
-            if (documento.needPlanDeAccion()) {
-                console.log('necesita plan de accion');
-                cambiarEstado('finalizado_sin_plan_accion', documento);
-                return true;
-            }
-            cambiarEstado('finalizado', documento);
-            console.log('no necesita plan de accion');
-            return false;
-        } catch (error) {
-            const customError = new CustomError('Error en HandlerPlanAccion', "Error al comprobar necesidad de plan de acción.");
-            console.error(customError.toString(), error);
-            return false;
+        if (documento.needPlanDeAccion()){
+            console.log('necesita plan de accion');
+            return true;
+
         }
-    }
-}
-// export function cambiarEstado(nuevoEstado: string,doc: Documento, repo: FirestoreRepository<Documento>)  {
-//     repo.updateDocument(doc.id, {estado: nuevoEstado} );
-//     //logica update 1 parametro
-// }
-export function cambiarEstado(nuevoEstado: string, doc: Documento) {
-    try {
-        doc.estado = nuevoEstado;
-    } catch (error) {
-        const customError = new CustomError('Error al cambiar el estado', "Error al actualizar el estado del documento.");
-        console.error(customError.toString(), error);
+        console.log('no necesita plan de accion');
+        return false;
     }
 }
 export class HandlerCambioEstado extends AbstractHandler {
@@ -84,9 +54,90 @@ export class HandlerCambioEstado extends AbstractHandler {
             documento.estado = this.estado;
             return true;
         } catch (error) {
-            const customError = new CustomError('Error en HandlerCambioEstado', "Error al cambiar el estado del documento.");
-            console.error(customError.toString(), error);
+            // const customError = new CustomError('Error en HandlerCambioEstado', "Error al cambiar el estado del documento.");
+            // console.error(customError.toString(), error);
             return false;
         }
+    }
+}
+export class HandlerEstadoActual extends AbstractHandler{
+    estado: string;
+    estado2?: string;
+    constructor(estado: string,estado2?: string) {
+        super();
+        this.estado = estado;
+        if (estado2) this.estado2 = estado2;
+    }
+    handle(documento: Documento): boolean {
+        try{
+            if(this.estado2){
+                if(this.estado === documento.estado || this.estado2 === documento.estado){
+                    console.log("si hay estado actual "+this.estado);
+                    return true;
+                }
+            }else if(this.estado === documento.estado){
+                console.log("si hay estado actual");
+
+                return true;
+            }
+            console.log(" no hay estado actual");
+            return false;
+        }catch(error){
+            console.log("Falla en el handler de estado actual: ",error);
+            return false;
+        }
+
+    }
+}
+export class HandlerEstadoAnterior extends AbstractHandler{
+    estado: string;
+    estado2?: string;
+    constructor(estado: string,estado2?: string) {
+        super();
+        this.estado = estado;
+        if (estado2) this.estado2 = estado2;
+    }
+    handle(documento: Documento, documentoAnterior?: Documento): boolean {
+        try{
+            console.log("--> estado anterior ",documentoAnterior?.estado);
+
+            // console.log("documento anteriorrrrrrrrrrrrrrrrrrrrrrrrrrrrr",documentoAnterior);
+            // console.log("estadoAnterior: ",documentoAnterior?.estado);
+            if (!documentoAnterior) return false;
+            if(this.estado2){
+                if(this.estado === documentoAnterior.estado || this.estado2 === documentoAnterior.estado){
+                    console.log("si hay estado anterior");
+                    return true;
+                }
+            }else if(this.estado === documentoAnterior.estado){
+                console.log("si hay estado anterior");
+                return true;
+            }
+            console.log("no hay estado anterior");
+
+            return false;
+        }catch(error){
+            console.log("Falla en el handler de estado anterior: ",error);
+            return false;
+        }
+
+    }
+}
+export class HandlerTienePlanAccion extends AbstractHandler{
+    handle(documento: Documento): boolean {
+        try{
+            if(documento.isPlanDeAccion){
+                console.log("si es plan de accion");
+
+                return true;
+            }
+            console.log("si no necesita plan de accion");
+
+            return false;
+        }catch(error){
+            console.log("Falla en el handler de tiene plan de accion: ",error);
+            return false;
+        }
+
     }
 }

@@ -13,7 +13,7 @@ export function crearDoc(): Documento {
 	doc.id = 'd1';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
-	doc.isPlanDeAccion = true;
+	doc.isPlanDeAccion = false;
 	doc.emisor = user;
 	doc.estado = 'generado';
 	doc.respuestasMalas = [];
@@ -24,7 +24,7 @@ export function crearDoc(): Documento {
 	checklist.descripcion = 'descripcionChecklist';
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
-	configuracion.needValidacion = false;
+	configuracion.needValidacion = true;
 	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;
@@ -55,7 +55,7 @@ export function crearDoc(): Documento {
 	respuestaC2.contenido = 'contenidoChito2';
 	respuestaC2.titulo = 'tituloChiquito2';
 	respuestaC2.tipo = 'tipoChiquito2';
-	doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
+	// doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
 	doc.respuestasMalasChildren.push(respuestaC1,respuestaC2);
 	
 	

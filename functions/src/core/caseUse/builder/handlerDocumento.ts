@@ -1,4 +1,5 @@
 import { Documento } from "../../models";
+import { CustomError } from "../../utils/customError/customError";
 import { AbstractHandler } from "./chainOfResponsability";
 
 export class HandlerNeedValidacion extends AbstractHandler {
@@ -11,8 +12,8 @@ export class HandlerNeedValidacion extends AbstractHandler {
             console.log('el doc no necesita validacion');
             return false;
         } catch (error) {
-            // const customError = new CustomError('Error en HandlerNeedValidacion', "Error al validar el documento.");
-            // console.error(customError.toString(), error);
+            const customError = new CustomError('Error en HandlerNeedValidacion', "Error al validar el documento.");
+            console.error(customError.toString(), error);
             return false;
         }
     }
@@ -20,24 +21,36 @@ export class HandlerNeedValidacion extends AbstractHandler {
 
 export class HandlerProblemas extends AbstractHandler {
     handle(documento: Documento): boolean {
-        if (documento.DocumentoConProblemas()) {
-            console.log('doc con problemas');
-            return true;
+        try {
+            if (documento.DocumentoConProblemas()) {
+                console.log('doc con problemas');
+                return true;
+            }
+            console.log('doc sin problemas');
+            return false;
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerProblemas', "Error en handler con problemas.");
+            console.error(customError.toString(), error);
+            return false;
         }
-        console.log('doc sin problemas');
-        return false;
     }
 }
 
 export class HandlerNeedPlanAccion extends AbstractHandler {
     handle(documento: Documento): boolean {
-        if (documento.needPlanDeAccion()){
-            console.log('necesita plan de accion');
-            return true;
-
+        try {
+            if (documento.needPlanDeAccion()){
+                console.log('necesita plan de accion');
+                return true;
+    
+            }
+            console.log('no necesita plan de accion');
+            return false;            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerNeedPlanAccion', "Error en handler plan de accion.");
+            console.error(customError.toString(), error);
+            return false;
         }
-        console.log('no necesita plan de accion');
-        return false;
     }
 }
 export class HandlerCambioEstado extends AbstractHandler {
@@ -54,8 +67,8 @@ export class HandlerCambioEstado extends AbstractHandler {
             documento.estado = this.estado;
             return true;
         } catch (error) {
-            // const customError = new CustomError('Error en HandlerCambioEstado', "Error al cambiar el estado del documento.");
-            // console.error(customError.toString(), error);
+            const customError = new CustomError('Error en HandlerCambioEstado', "Error al cambiar el estado del documento.");
+            console.error(customError.toString(), error);
             return false;
         }
     }
@@ -83,7 +96,8 @@ export class HandlerEstadoActual extends AbstractHandler{
             console.log(" no hay estado actual");
             return false;
         }catch(error){
-            console.log("Falla en el handler de estado actual: ",error);
+            const customError = new CustomError('Error en HandlerEstadoActual', "Error en el handler de estado actual.");
+            console.error(customError.toString(), error);
             return false;
         }
 
@@ -117,7 +131,8 @@ export class HandlerEstadoAnterior extends AbstractHandler{
 
             return false;
         }catch(error){
-            console.log("Falla en el handler de estado anterior: ",error);
+            const customError = new CustomError('Error en HandlerEstadoAnterior', "Error en el handler de estado anterior.");
+            console.error(customError.toString(), error);
             return false;
         }
 
@@ -135,9 +150,9 @@ export class HandlerTienePlanAccion extends AbstractHandler{
 
             return false;
         }catch(error){
-            console.log("Falla en el handler de tiene plan de accion: ",error);
+            const customError = new CustomError('Error en HandlerTienePlanAccion', "Error en el handler de tiene plan de accion.");
+            console.error(customError.toString(), error);
             return false;
         }
-
     }
 }

@@ -30,10 +30,25 @@ export class ArbolBinario{
 
         this.root = agregarRecursivo();
     }
+    /**
+     *
+     *
+     * @param {Documento} documento
+     * @return {*}  {boolean}
+     * @memberof ArbolBinario
+     */
     procesarDocumento(documento: Documento): boolean {
         return this.recorrerArbol(this.root, documento);
     }
-    
+    /**
+     *
+     *
+     * @private
+     * @param {(Nodo | null)} nodo
+     * @param {Documento} documento
+     * @return {*}  {boolean}
+     * @memberof ArbolBinario
+     */
     private recorrerArbol(nodo: Nodo | null, documento: Documento): boolean {
         if (!nodo) return false;
     
@@ -48,22 +63,40 @@ export class ArbolBinario{
             return this.recorrerArbol(nodo.derecha, documento);
         }
     }
-    procesarDocumentoA(documento: Documento,documentoAnterior:Documento): boolean {
-        return this.recorrerArbolA(this.root, documento,documentoAnterior);
+    /**
+     *
+     *
+     * @param {Documento} documento
+     * @param {Documento} documentoAnterior
+     * @return {*}  {boolean}
+     * @memberof ArbolBinario
+     */
+    procesarDocumentoComplejo(documento: Documento, documentoAnterior: Documento): boolean {
+        return this.recorrerArbolComplejo(this.root, documento,documentoAnterior);
     }
-    
-    private recorrerArbolA(nodo: Nodo | null, documento: Documento,DocumentoAnterior:Documento): boolean {
+    /**
+     *
+     *
+     * @private metodo para recorrer arboles complejos en este caso para el flujo de actualizacion de documentos con estado anterior
+     * @param {(Nodo | null)} nodo
+     * @param {Documento} documento
+     * @param {Documento} DocumentoAnterior
+     * @return {*}  {boolean}
+     * @memberof ArbolBinario
+     */
+    private recorrerArbolComplejo(nodo: Nodo | null, documento: Documento,DocumentoAnterior: Documento): boolean {
         if (!nodo) return false;
     
         // Procesa el nodo actual
+        // console.log("Revisando arbolito",DocumentoAnterior)
         const resultadoActual = nodo.valor.handle(documento,DocumentoAnterior);//ver como agregar el estado anterior
     
         if (resultadoActual) {
             // Si el resultado es verdadero, procesamos el nodo izquierdo
-            return this.recorrerArbol(nodo.izquierda, documento);
+            return this.recorrerArbolComplejo(nodo.izquierda, documento, DocumentoAnterior);
         } else {
             // Si el resultado es falso, procesamos el nodo derecho
-            return this.recorrerArbol(nodo.derecha, documento);
+            return this.recorrerArbolComplejo(nodo.derecha, documento, DocumentoAnterior);
         }
     }
 }

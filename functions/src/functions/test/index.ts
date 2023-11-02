@@ -13,7 +13,7 @@ export function crearDoc(): Documento {
 	doc.id = 'd1';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
-	doc.isPlanDeAccion = true;
+	doc.isPlanDeAccion = false;
 	doc.emisor = user;
 	doc.estado = 'generado';
 	doc.respuestasMalas = [];
@@ -25,7 +25,7 @@ export function crearDoc(): Documento {
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
 	configuracion.needValidacion = true;
-	configuracion.needPlanDeAccion = false;
+	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;
 	checklist.configuracion = configuracion;	

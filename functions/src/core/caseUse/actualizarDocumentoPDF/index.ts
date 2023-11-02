@@ -12,7 +12,13 @@ import {
     HandlerTienePlanAccion,
     HandlerEstadoAnterior, 
     } from "../builder";
-
+/**
+ *
+ * Flujo para generar arbol binario para actualizar documento
+ * @param {FirestoreRepository<Documento>} repo
+ * @param {string} empresa
+ * @return {*}  {ArbolBinario}
+ */
 function FlujoActualizarPDF(repo: FirestoreRepository<Documento>,empresa:string): ArbolBinario {
     const arbol = new ArbolBinario();
     const estadoActualValidado = new HandlerEstadoActual(DocumentoEstado.validado,DocumentoEstado.finalizado);
@@ -22,6 +28,7 @@ function FlujoActualizarPDF(repo: FirestoreRepository<Documento>,empresa:string)
     const generarPDF = new HandlerGenerarPDF(empresa);
     const notificacionDocGenerado = new HandlerNotificacion("Importante","El documento generado y validado");
     const notificacionRechazo = new HandlerNotificacion("Importante","El documento rechazado");
+    const notificacionPDFRechazado = new HandlerNotificacion("Aviso","Se genera un PDF rechazado");
     const tienePlanAccion = new HandlerTienePlanAccion();
     const needPlanAccion = new HandlerNeedPlanAccion();
     const estadoFinalizado= new HandlerCambioEstado(DocumentoEstado.finalizado);
@@ -30,10 +37,10 @@ function FlujoActualizarPDF(repo: FirestoreRepository<Documento>,empresa:string)
     const estadoRechazadoPlanAccion = new HandlerCambioEstado(DocumentoEstado.rechazadoPlan);
     const updatear = new HandlerUpdateDocument(repo);
 
-    arbol.insertarNodo([estadoActualValidado,estadoAnterior,generarPDF,notificacionDocGenerado,tienePlanAccion,estadoFinalizado,updatear,null,null,null,needPlanAccion,estadoFinalizadoPlanAccion,updatear,null,null,null,estadoFinalizado,updatear,null,null,null,estadoActualRechazado,estadoAnteriorRechazado,notificacionRechazo,tienePlanAccion,estadoRechazado,updatear,null,null,null,needPlanAccion,estadoRechazadoPlanAccion,updatear,null,null,null,estadoRechazado,updatear,null,null,null,estadoRechazado,updatear]);
+    arbol.insertarNodo([estadoActualValidado,estadoAnterior,generarPDF,notificacionDocGenerado,tienePlanAccion,estadoFinalizado,updatear,null,null,null,needPlanAccion,estadoFinalizadoPlanAccion,updatear,null,null,null,estadoFinalizado,updatear,null,null,null,null,null,estadoFinalizado,updatear,null,null,null,estadoActualRechazado,estadoAnteriorRechazado,null,notificacionRechazo,tienePlanAccion,estadoRechazado,generarPDF,notificacionPDFRechazado,updatear,null,null,null,null,null,needPlanAccion,estadoRechazadoPlanAccion,updatear,null,null,null,estadoRechazado,generarPDF,notificacionRechazo,updatear]);
     return arbol;
 }
 export function procesarDocumentoFlujoActualizacion(doc: Documento,docAnterior:Documento,repo: FirestoreRepository<Documento>,empresa:string) {
     const arbol = FlujoActualizarPDF(repo,empresa);
-    arbol.procesarDocumentoA(doc,docAnterior);
+    arbol.procesarDocumentoComplejo(doc,docAnterior);
 }

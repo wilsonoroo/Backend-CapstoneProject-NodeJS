@@ -60,11 +60,15 @@ export class HandlerEstadoActual extends AbstractHandler{
         try{
             if(this.estado2){
                 if(this.estado === documento.estado || this.estado2 === documento.estado){
+                    console.log("si hay estado actual "+this.estado);
                     return true;
                 }
             }else if(this.estado === documento.estado){
+                console.log("si hay estado actual");
+
                 return true;
             }
+            console.log(" no hay estado actual");
             return false;
         }catch(error){
             console.log("Falla en el handler de estado actual: ",error);
@@ -81,16 +85,24 @@ export class HandlerEstadoAnterior extends AbstractHandler{
         this.estado = estado;
         if (estado2) this.estado2 = estado2;
     }
-    handle(documento: Documento,documentoAnterior?: Documento): boolean {
+    handle(documento: Documento, documentoAnterior?: Documento): boolean {
         try{
+            console.log("--> estado anterior ",documentoAnterior?.estado);
+
+            // console.log("documento anteriorrrrrrrrrrrrrrrrrrrrrrrrrrrrr",documentoAnterior);
+            // console.log("estadoAnterior: ",documentoAnterior?.estado);
             if (!documentoAnterior) return false;
             if(this.estado2){
                 if(this.estado === documentoAnterior.estado || this.estado2 === documentoAnterior.estado){
+                    console.log("si hay estado anterior");
                     return true;
                 }
             }else if(this.estado === documentoAnterior.estado){
+                console.log("si hay estado anterior");
                 return true;
             }
+            console.log("no hay estado anterior");
+
             return false;
         }catch(error){
             console.log("Falla en el handler de estado anterior: ",error);
@@ -103,8 +115,12 @@ export class HandlerTienePlanAccion extends AbstractHandler{
     handle(documento: Documento): boolean {
         try{
             if(documento.isPlanDeAccion){
+                console.log("si es plan de accion");
+
                 return true;
             }
+            console.log("si no necesita plan de accion");
+
             return false;
         }catch(error){
             console.log("Falla en el handler de tiene plan de accion: ",error);

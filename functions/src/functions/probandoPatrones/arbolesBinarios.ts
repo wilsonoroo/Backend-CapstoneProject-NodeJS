@@ -24,7 +24,8 @@ export const escuchandoCambios = onDocumentUpdated("empresas/{nombreEmpresa}/ger
     const dataAnterior = event.data?.before.data();
     const transformedData2 = convertDocumentTimestampsToDate(dataAnterior);
     const docAnterior = plainToClass(Documento, transformedData2);
-    
+    console.log("--> estado anterior desde main",docAnterior.estado);
+    // console.log("--> documento",doc);
     console.log("--------caso de uso ----->");
     const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
     const repo = new FirestoreRepository<Documento>(rutaDoc);

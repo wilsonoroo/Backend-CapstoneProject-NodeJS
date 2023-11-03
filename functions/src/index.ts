@@ -29,3 +29,5 @@ export const arbol = arboltest;
 // export const flujo = flujoHandler;
 export const caseuse=handler;
 export const segundo  = escuchandoCambios;
+// export const test1 = contando
+// export const addDoc = agregarDocumento;

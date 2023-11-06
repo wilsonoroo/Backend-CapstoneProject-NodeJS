@@ -1,5 +1,11 @@
 import { Documento } from "../../models";
+import { FirestoreRepository } from "../../services";
+import NotificationService from "../../services/notificacion/notificacionFCM";
+// import NotificationService from "../../services/notificacion/notificacionFCM";
+// import { FirestoreRepository } from "../../services";
 import { CustomError } from "../../utils/customError/customError";
+import { getUserTokensFromMap } from "../../utils/getTokens";
+import { todosHanFirmado } from "../../utils/verificadorDeFirma/verificador";
 import { AbstractHandler } from "./chainOfResponsability";
 
 export class HandlerNeedValidacion extends AbstractHandler {
@@ -152,6 +158,183 @@ export class HandlerTienePlanAccion extends AbstractHandler{
         }catch(error){
             const customError = new CustomError('Error en HandlerTienePlanAccion', "Error en el handler de tiene plan de accion.");
             console.error(customError.toString(), error);
+            return false;
+        }
+    }
+}
+
+
+
+
+
+
+///////////////////////////////
+
+export class HandlerIsTipoIS extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        try {
+            if (documento.checklist && documento.checklist.abreviatura === "IS") {
+                console.log("El documento es tipo IS");
+                return true;
+            } else {
+                console.log("El documento no es IS");
+                return false;
+            }            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerIsTipoIS', "El documento no es tipo IS.");
+            console.error(customError.toString(), error);
+            return false;            
+        }
+    }
+}
+
+export class HandlerTodosHanFirmado extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        try {
+            if (documento.cuadrilla && todosHanFirmado(documento)) {
+                console.log("Todos han firmado el documento");
+                return true;
+            } else {
+                console.log("Faltan firmas en la cuadrilla.");
+                return false;
+            }            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerTodosHanFirmado ', "No han firmado todos los integrantes.");
+            console.error(customError.toString(), error);
+            return false;
+            
+        }
+    }
+}
+
+export class HandlerEstadoGenerado extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        try {
+            if (documento.estado == "generado") {
+                console.log("El documento está en estado generado");
+                return true;
+            } else {
+                console.log("El documento no está en el estado 'generado'");
+                return false;
+            }            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerEstadoGenerado ', "El estado del documento no es generado.");
+            console.error(customError.toString(), error);
+            return false;
+        }
+    }
+}
+
+
+// HandlerCambioEstado.ts
+export class HandlerCambioEstadoo extends AbstractHandler {
+    private estado: string;
+
+    constructor(estado: string) {
+        super();
+        this.estado = estado;
+    }
+
+    handle(documento: Documento): boolean {
+        try {
+            documento.estado = this.estado;
+            console.log(`Estado del documento cambiado localmente a ${this.estado}`);
+            return true;            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerCambioEstadoo ', "error al cambiar de estado.");
+            console.error(customError.toString(), error);
+            return false;
+            
+        }
+    }
+}
+
+
+// HandlerMoverDocumento.ts
+export class HandlerMoverDocumento extends AbstractHandler {
+    private newRepo: FirestoreRepository<Documento>;
+    private docId: string;
+
+    constructor(newRepo: FirestoreRepository<Documento>, docId: string) {
+        super();
+        this.newRepo = newRepo;
+        this.docId = docId;
+    }
+
+    async handle(documento: Documento): Promise<boolean> {
+        try {
+            await this.newRepo.addDocumentById(this.docId, documento);
+            console.log("Documento movido a la nueva ruta");
+            return true;            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerMoverDocumento ', "Error al mover el documento.");
+            console.error(customError.toString(), error);
+            return false;
+
+        }
+    }
+}
+
+// HandlerEliminarDocumentoOriginal.ts
+export class HandlerEliminarDocumentoOriginal extends AbstractHandler {
+    private repo: FirestoreRepository<Documento>;
+    private docId: string;
+
+    constructor(repo: FirestoreRepository<Documento>, docId: string) {
+        super();
+        this.repo = repo;
+        this.docId = docId;
+    }
+
+    async handle(documento: Documento): Promise<boolean> {
+        try {
+            await this.repo.deleteDocument(this.docId);
+            console.log("Documento original eliminado");
+            return true;            
+        } catch (error) {
+            const customError = new CustomError('Error en HandlerEliminarDocumentoOriginal ', "Error al eliminar documento.");
+            console.error(customError.toString(), error);
+            return false;
+            
+        }
+    }
+}
+
+
+
+export class HandlerNotificarValidadores extends AbstractHandler {
+    private notificationService: NotificationService;
+    private mensaje: any;
+
+    constructor(notificationService: NotificationService, mensaje: any) {
+        super();
+        this.notificationService = notificationService;
+        this.mensaje = mensaje;
+    }
+
+    async handle(documento: Documento): Promise<boolean> {
+        try {
+            if (documento.cuadrilla && documento.cuadrilla.validadores) {
+                const validadoresTokens = await getUserTokensFromMap(documento.cuadrilla.validadores);
+                if (validadoresTokens.length > 0) {
+                    const response = await this.notificationService.sendNotificationMulticast(validadoresTokens, this.mensaje);
+                    if (response.success) {
+                        console.log("Notificación enviada exitosamente");
+                        return true;
+                    } else {
+                        console.error("Error enviando notificación:", response.error);
+                        return false;
+                    }
+                } else {
+                    console.log("No se encontraron tokens de validadores para enviar notificaciones");
+                    return false;
+                }
+            } else {
+                console.log("No hay validadores asignados o la estructura de cuadrilla no es correcta.");
+                return false;
+            }
+        } catch (error) {
+            console.error("Error al enviar notificación a los validadores", error);
             return false;
         }
     }

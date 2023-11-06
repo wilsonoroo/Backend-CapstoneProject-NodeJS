@@ -6,5 +6,7 @@ export enum DocumentoEstado {
     finalizadoPlan = "finalizado_sin_plan_accion",
     rechazado = "rechazado",
     rechazadoPlan = "rechazado_sin_plan_accion",
+    generado = "generado",
+    pendienteValidar = "pendiente_validar",
     // ... otros estados que necesites
 }

@@ -139,8 +139,11 @@ export class HandlerEstadoAnterior extends AbstractHandler{
         }catch(error){
             const customError = new CustomError('Error en HandlerEstadoAnterior', "Error en el handler de estado anterior.");
             console.error(customError.toString(), error);
+            // throw customError;
+    
             return false;
         }
+
 
     }
 }

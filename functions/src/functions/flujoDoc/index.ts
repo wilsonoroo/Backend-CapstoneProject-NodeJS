@@ -39,7 +39,7 @@ export const GenerarDocumento = onDocumentCreated("empresas/{nombreEmpresa}/gere
     if(!needValidacion){
         const pdf =EnkiCreator.generarPDF(doc)
         console.log(" pdf:", pdf)
-        doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+        doc.pdf =await  Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
         console.log("EL DOCUMENTO FUE VALIDADO");                    
         const mensaje = {
             title: 'AVISO',

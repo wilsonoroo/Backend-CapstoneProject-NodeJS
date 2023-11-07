@@ -3,6 +3,8 @@ import {FirestoreRepository} from '../../core/services/repository/FirestoreRepos
 import { Respuesta,Checklist,ConfiguracionChecklist,Integrante} from '../../core/models';
 import {onRequest} from 'firebase-functions/v2/https';
 import {Request, Response} from 'firebase-functions';
+import * as fs from 'fs';
+import { Storage } from '../../core/services/storage/storage';
 
 //Metodos de prueba de funcionalidaes
 export function crearDoc(): Documento {
@@ -24,7 +26,7 @@ export function crearDoc(): Documento {
 	checklist.descripcion = 'descripcionChecklist';
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
-	configuracion.needValidacion = true;
+	configuracion.needValidacion = false;
 	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;
@@ -62,7 +64,7 @@ export function crearDoc(): Documento {
 	return doc
 }
 
-export const generarDoc =onRequest(async (request: Request, response: Response) => {
+export const generarDoc = onRequest(async (request: Request, response: Response) => {
     const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
     // const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
@@ -107,4 +109,9 @@ export const generarDoc =onRequest(async (request: Request, response: Response) 
         console.error(error);
         response.status(500).send('Hubo un error al agregar el documento o las respuestas malas');
     }
+});
+export const generarPDF =onRequest(async (request: Request, response: Response) => {
+	const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
+	const pdf = await Storage.saveFilePDF('VAKU', pdfData);
+	console.log('pdf', pdf);
 });

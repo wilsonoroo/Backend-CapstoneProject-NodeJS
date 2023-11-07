@@ -33,7 +33,7 @@ function FlujoGenerarDoc(repo: FirestoreRepository<Documento>,empresa:string): A
     arbol.insertarNodo([validacion,problemas,estadoConProblemas,notificacionTieneProblemas,updatear,null,null,null,null,estadoSinProblemas,notificacionSinProblemas,updatear,null,null,null,null,generarPDF,notificacionPDF,estadoValidado,planAccion,estadoFinalizadoPlan,updatear,null,null,null,estadoFinalizado,updatear]);
     return arbol;
 }
-export function procesarDocumento(doc: Documento,repo: FirestoreRepository<Documento>,empresa:string) {
+export function procesarDocumentoFlujoGenerar(doc: Documento,repo: FirestoreRepository<Documento>,empresa:string) {
     const arbol = FlujoGenerarDoc(repo,empresa);
     arbol.procesarDocumento(doc);
 }

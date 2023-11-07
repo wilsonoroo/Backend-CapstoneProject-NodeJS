@@ -48,7 +48,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
         if(estadoAnterior === "doc_con_problemas"||estadoAnterior === "doc_sin_problemas"){
             const pdf =EnkiCreator.generarPDF(doc)
             console.log(" pdf:", pdf)
-            doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+            doc.pdf = await Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
             //transformar a JSON el documento.pdf   
             const jsonPDF = JSON.parse(JSON.stringify(doc.pdf))
             console.log("pdf",jsonPDF)
@@ -107,7 +107,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
                     };
                     await notificationService.sendNotificationMulticast(tokens, mensaje);
 
-                    doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+                    doc.pdf = await Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
                     //transformar a JSON el documento.pdf   
                     const jsonPDF = JSON.parse(JSON.stringify(doc.pdf))
                     repo.updateDocument(doc.id, {pdf:jsonPDF});
@@ -116,7 +116,7 @@ export const FlujoActualizarPDF = onDocumentUpdated("empresas/{nombreEmpresa}/ge
             else{
                 const pdf =EnkiCreator.generarPDF(doc)
                 console.log(" pdf:", pdf)
-                doc.pdf = Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
+                doc.pdf = await Storage.saveFilePDF(empresa,pdfData);//enviar a storage el documento
                 //transformar a JSON el documento.pdf   
                 const jsonPDF = JSON.parse(JSON.stringify(doc.pdf))
                 repo.updateDocument(doc.id, {pdf:jsonPDF} );

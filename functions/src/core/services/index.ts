@@ -1,4 +1,4 @@
-export * from './firebase';
+// export * from './firebase';
 export * from './repository';
 export * from './storage';
 export * from './notificacion';

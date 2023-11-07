@@ -1,10 +1,13 @@
 import { Documento } from "../../models";
 // import { EnkiCreator, FirestoreRepository, Storage } from "../../services";
-import {  FirestoreRepository,  } from "../../services";
+import {  FirestoreRepository, Storage } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
 import {  convertDocumentDatesToTimestamps, mensaje } from "../../utils";
 import { CustomError } from "../../utils/customError/customError";
 import { AbstractHandler } from "./chainOfResponsability";
+import * as fs from 'fs';
+// import {initializeApp} from "firebase-admin/app";
+// initializeApp({ projectId: "vaku-dev" });
 
 export class HandlerGenerarPDF extends AbstractHandler {
     empresa: string;
@@ -12,14 +15,25 @@ export class HandlerGenerarPDF extends AbstractHandler {
         super();
         this.empresa = empresa;    
     }
-    handle(documento: Documento): boolean {
+    async handle(documento: Documento): Promise<boolean> {
         //enki_creator
         // const pdfData = EnkiCreator.generarPDF(documento);//falta la logica de enkicreator
         // //manadar al storage
-        // documento.pdf = Storage.saveFilePDF(this.empresa,pdfData);//enviar a storage el documento
-        // //actualizar doc con el archivo
-        console.log('generando pdf');
-        return true;
+        try{
+            const pdfData = fs.readFileSync('Rendicion_Numero_1.pdf');
+            const pdf = await Storage.saveFilePDF(this.empresa,pdfData);//enviar a storage el documento
+            if(pdf){
+                documento.pdf = pdf;
+                console.log('generando pdf');
+                return true;
+            }
+            console.log('no se genero el pdf');
+            return false;
+        }catch(error){
+            const customError = new CustomError('Error en HandlerGenerarPDF', "Error al generar el PDF.");
+            console.error(customError.toString(), error);
+            return false;
+        }        
     }
 }
 export class HandlerNotificacion extends AbstractHandler {

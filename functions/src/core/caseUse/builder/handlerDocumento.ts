@@ -4,7 +4,7 @@ import NotificationService from "../../services/notificacion/notificacionFCM";
 // import NotificationService from "../../services/notificacion/notificacionFCM";
 // import { FirestoreRepository } from "../../services";
 import { CustomError } from "../../utils/customError/customError";
-import { getUserTokensFromMap } from "../../utils/getTokens";
+// import { getUserTokensFromMap } from "../../utils/getTokens";
 import { todosHanFirmado } from "../../utils/verificadorDeFirma/verificador";
 import { AbstractHandler } from "./chainOfResponsability";
 
@@ -305,35 +305,69 @@ export class HandlerEliminarDocumentoOriginal extends AbstractHandler {
 
 
 
-export class HandlerNotificarValidadores extends AbstractHandler {
+// export class HandlerNotificarValidadores extends AbstractHandler {
+//     private notificationService: NotificationService;
+//     private mensaje: any;
+
+//     constructor(notificationService: NotificationService, mensaje: any) {
+//         super();
+//         this.notificationService = notificationService;
+//         this.mensaje = mensaje;
+//     }
+
+//     async handle(documento: Documento): Promise<boolean> {
+//         try {
+//             if (documento.cuadrilla && documento.cuadrilla.validadores) {
+//                 const validadoresTokens = await getUserTokensFromMap(documento.cuadrilla.validadores);
+//                 if (validadoresTokens.length > 0) {
+//                     const response = await this.notificationService.sendNotificationMulticast(validadoresTokens, this.mensaje);
+//                     if (response.success) {
+//                         console.log("Notificación enviada exitosamente");
+//                         return true;
+//                     } else {
+//                         console.error("Error enviando notificación:", response.error);
+//                         return false;
+//                     }
+//                 } else {
+//                     console.log("No se encontraron tokens de validadores para enviar notificaciones");
+//                     return false;
+//                 }
+//             } else {
+//                 console.log("No hay validadores asignados o la estructura de cuadrilla no es correcta.");
+//                 return false;
+//             }
+//         } catch (error) {
+//             console.error("Error al enviar notificación a los validadores", error);
+//             return false;
+//         }
+//     }
+// }
+
+export class HandlerNotificar extends AbstractHandler {
     private notificationService: NotificationService;
     private mensaje: any;
+    private validadoresTokens: string[]; // Agregar esta línea
 
-    constructor(notificationService: NotificationService, mensaje: any) {
+    constructor(notificationService: NotificationService, mensaje: any, validadoresTokens: string[]) {
         super();
         this.notificationService = notificationService;
         this.mensaje = mensaje;
+        this.validadoresTokens = validadoresTokens; // Asignar los tokens aquí
     }
 
     async handle(documento: Documento): Promise<boolean> {
         try {
-            if (documento.cuadrilla && documento.cuadrilla.validadores) {
-                const validadoresTokens = await getUserTokensFromMap(documento.cuadrilla.validadores);
-                if (validadoresTokens.length > 0) {
-                    const response = await this.notificationService.sendNotificationMulticast(validadoresTokens, this.mensaje);
-                    if (response.success) {
-                        console.log("Notificación enviada exitosamente");
-                        return true;
-                    } else {
-                        console.error("Error enviando notificación:", response.error);
-                        return false;
-                    }
+            if (this.validadoresTokens.length > 0) {
+                const response = await this.notificationService.sendNotificationMulticast(this.validadoresTokens, this.mensaje);
+                if (response.success) {
+                    console.log("Notificación enviada exitosamente");
+                    return true;
                 } else {
-                    console.log("No se encontraron tokens de validadores para enviar notificaciones");
+                    console.error("Error enviando notificación:", response.error);
                     return false;
                 }
             } else {
-                console.log("No hay validadores asignados o la estructura de cuadrilla no es correcta.");
+                console.log("No se encontraron tokens de validadores para enviar notificaciones");
                 return false;
             }
         } catch (error) {

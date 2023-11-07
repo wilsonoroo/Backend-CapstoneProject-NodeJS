@@ -26,9 +26,9 @@ function FlujoActualizarPDF(repo: FirestoreRepository<Documento>,empresa:string)
     const estadoAnteriorRechazado = new HandlerEstadoAnterior(DocumentoEstado.rechazado);
     const estadoAnterior = new HandlerEstadoAnterior(DocumentoEstado.conProblemas,DocumentoEstado.sinProblemas);
     const generarPDF = new HandlerGenerarPDF(empresa);
-    const notificacionDocGenerado = new HandlerNotificacion("Importante","El documento generado y validado");
-    const notificacionRechazo = new HandlerNotificacion("Importante","El documento rechazado");
-    const notificacionPDFRechazado = new HandlerNotificacion("Aviso","Se genera un PDF rechazado");
+    const notificacionDocGenerado = new HandlerNotificacion("Importante","El documento generado y validado");//notificar al usuario creador
+    const notificacionRechazo = new HandlerNotificacion("Importante","El documento rechazado");//notificar al usuario creador
+    const notificacionPDFRechazado = new HandlerNotificacion("Aviso","Se genera un PDF rechazado");//notificar al usuario creador
     const tienePlanAccion = new HandlerTienePlanAccion();
     const needPlanAccion = new HandlerNeedPlanAccion();
     const estadoFinalizado= new HandlerCambioEstado(DocumentoEstado.finalizado);

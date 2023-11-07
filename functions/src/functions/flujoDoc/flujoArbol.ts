@@ -13,5 +13,5 @@ export const generarNuevoDocumento = onDocumentCreated("empresas/{nombreEmpresa}
     const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const empresa = event.params.nombreEmpresa;
-    procesarDocumentoFlujoGenerar(doc,repo,empresa);
+    await procesarDocumentoFlujoGenerar(doc,repo,empresa);
 })

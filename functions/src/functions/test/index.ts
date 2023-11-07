@@ -11,6 +11,7 @@ export function crearDoc(): Documento {
 	const user = new Integrante();
 	user.id = 'idUsuarios';
 	user.email = 'idUsuarios@gmail.com';
+	user.displayName = 'Miguel';
 	const doc = new Documento();
 	doc.id = 'd1';
 	doc.isConCuadrilla= true;

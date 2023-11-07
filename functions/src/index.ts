@@ -11,7 +11,7 @@ import {
 // import { generarDoc2 } from "./functions";
 // import { arboltest } from "./functions/probandoPatrones/arbol";
 import { generarDoc, generarPDF } from "./functions/test";
-import {   handler } from "./functions/probandoPatrones/arbolesBinarios";
+// import {   handler } from "./functions/probandoPatrones/arbolesBinarios";
 // import { escuchando2 } from "./functions/flujoIS/t2";
 // import { agregarDocumento } from "./functions/flujoIS/documentotest";
 import {initializeApp} from "firebase-admin/app";
@@ -31,7 +31,7 @@ initializeApp({ projectId: "vaku-dev" });
 export const doc = generarDoc;
 export const doc2 = GenerarDocumento;
 export const pdf =generarPDF;
-export const caseuse=handler;
+// export const caseuse=handler;
 export const flujoGenerarDoc = generarNuevoDocumento;
 export const flujoActualizarDoc = actualizarDocumento;
 

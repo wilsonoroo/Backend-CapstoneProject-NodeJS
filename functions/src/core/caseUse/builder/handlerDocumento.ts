@@ -226,7 +226,6 @@ export class HandlerEstadoGenerado extends AbstractHandler {
 }
 
 
-// HandlerCambioEstado.ts
 export class HandlerCambioEstadoo extends AbstractHandler {
     private estado: string;
 
@@ -249,8 +248,6 @@ export class HandlerCambioEstadoo extends AbstractHandler {
     }
 }
 
-
-// HandlerMoverDocumento.ts
 export class HandlerMoverDocumento extends AbstractHandler {
     private newRepo: FirestoreRepository<Documento>;
     private docId: string;
@@ -275,7 +272,6 @@ export class HandlerMoverDocumento extends AbstractHandler {
     }
 }
 
-// HandlerEliminarDocumentoOriginal.ts
 export class HandlerEliminarDocumentoOriginal extends AbstractHandler {
     private repo: FirestoreRepository<Documento>;
     private docId: string;
@@ -373,3 +369,7 @@ export class HandlerNotificar extends AbstractHandler {
         }
     }
 }
+
+
+
+

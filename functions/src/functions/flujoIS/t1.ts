@@ -73,7 +73,12 @@ export const escuchando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idG
             
         } else if (dataAfter.cuadrilla && !todosHanFirmado(dataAfter)) {
             console.log("Faltan firmas en la cuadrilla.");
-            //NOTIFICAR LOS USUARIOS DEL DOCUMENTO QUE DEBEN FIRMAR
+            // if (!snapshot.before.exists) {
+            //     console.log("El documento ha sido creado recientemente. Notificando a los usuarios para validación.");
+
+            // }else{
+            //     console.log("El documento ya existía y todavía le faltan firmas.");
+            // }
         }
     }else {
         console.log("El documento no es IS")        

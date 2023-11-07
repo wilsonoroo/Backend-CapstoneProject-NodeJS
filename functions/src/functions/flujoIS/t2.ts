@@ -4,7 +4,7 @@ import {Documento} from '../../core/models';
 import {
     onDocumentWritten,
   } from "firebase-functions/v2/firestore";
-import { ArbolBinario, HandlerCambioEstado, HandlerEliminarDocumentoOriginal, HandlerEstadoGenerado, HandlerIsTipoIS, HandlerMoverDocumento, HandlerNotificar, HandlerTodosHanFirmado } from '../../core/caseUse/builder';
+import { ArbolBinario, HandlerCambioEstado, HandlerEliminarDocumentoOriginal, HandlerEstadoGenerado, HandlerIsTipoIS, HandlerMoverDocumento, HandlerNotificar, HandlerTodosHanFirmado, HandlerVerificarCreacion } from '../../core/caseUse/builder';
 import NotificationService from '../../core/services/notificacion/notificacionFCM';
 import { getUserTokensFromMap } from '../../core/utils/getTokens';
 
@@ -40,20 +40,19 @@ export const escuchando2 = onDocumentWritten("empresas/{idEmpresa}/gerencias/{id
 
     // Ahora, asegúrate de que hay una 'cuadrilla' y 'validadores' antes de proceder
     const validadores = dataAfter?.cuadrilla?.validadores || dataBefore?.cuadrilla?.validadores;
-    if (!validadores) {
-        console.log("No 'cuadrilla' data found in before or after snapshots.");
-        return;
-    }
+    const integrantes = dataAfter?.cuadrilla?.integrantes || dataBefore?.cuadrilla?.integrantes;
+    
 
     // Asegúrate de que la función 'getUserTokensFromMap' maneje correctamente 'null' o 'undefined'
     const validadoresTokens = validadores ? await getUserTokensFromMap(validadores) : [];
-
+    const integrantesTokens = integrantes ? await getUserTokensFromMap(integrantes) : [];
+    console.log(integrantesTokens)
     
-    await haciendoElFlujoIS(dataAfter, repo, newRepo, docId, event.params.idEmpresa, validadoresTokens);
+    await haciendoElFlujoIS(dataAfter, repo, newRepo, docId, event.params.idEmpresa, dataBefore, validadoresTokens, integrantesTokens);
     
 });
 
-async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, validadoresTokens: string[]): Promise<ArbolBinario> {
+async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, beforeData: Documento | undefined, validadoresTokens: string[], integrantesTokens: string[]): Promise<ArbolBinario> {
     const arbol = new ArbolBinario();
     const notificationService = new NotificationService();
 
@@ -70,17 +69,25 @@ async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreR
     const cambioEstado = new HandlerCambioEstado("pendiente_validar");
     const moverDocumento = new HandlerMoverDocumento(newRepo, docId);
     const eliminarDocumentoOriginal = new HandlerEliminarDocumentoOriginal(repo, docId);
+
+    const verificarCreacion = new HandlerVerificarCreacion(beforeData);
+    
+    const mensajeNotificacion2 = {
+        title: "FIRMA INTEGRANTES",
+        body: "I Debes firmar el documento IS pendiente de validación."
+    };
+    const notificarIntegrantes = new HandlerNotificar(notificationService, mensajeNotificacion2, integrantesTokens); 
     
 
   
-    arbol.insertarNodo([documentoIS, firmaIntegrantes, estadoGenerado, notificarValidadoresHandler, cambioEstado, moverDocumento, eliminarDocumentoOriginal, null, null, null, null, null, null, null,  ]);
+    arbol.insertarNodo([documentoIS, firmaIntegrantes, estadoGenerado, notificarValidadoresHandler, cambioEstado, moverDocumento, eliminarDocumentoOriginal, null, null, null, null, null, null, verificarCreacion, notificarIntegrantes]);
 
     return arbol;
 }
 
 
-export async function haciendoElFlujoIS(doc: Documento, repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, validadoresTokens: string[]) {
-    const arbol = await flujoIS(repo, newRepo, docId, empresa, validadoresTokens);
+export async function haciendoElFlujoIS(doc: Documento, repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, dataBefore: Documento | undefined, validadoresTokens: string[], integrantesTokens: string[]) {
+    const arbol = await flujoIS(repo, newRepo, docId, empresa, dataBefore, validadoresTokens, integrantesTokens);
     arbol.procesarDocumento(doc);
 }
 

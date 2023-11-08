@@ -225,29 +225,6 @@ export class HandlerEstadoGenerado extends AbstractHandler {
     }
 }
 
-
-export class HandlerCambioEstadoo extends AbstractHandler {
-    private estado: string;
-
-    constructor(estado: string) {
-        super();
-        this.estado = estado;
-    }
-
-    handle(documento: Documento): boolean {
-        try {
-            documento.estado = this.estado;
-            console.log(`Estado del documento cambiado localmente a ${this.estado}`);
-            return true;            
-        } catch (error) {
-            const customError = new CustomError('Error en HandlerCambioEstadoo ', "error al cambiar de estado.");
-            console.error(customError.toString(), error);
-            return false;
-            
-        }
-    }
-}
-
 export class HandlerMoverDocumento extends AbstractHandler {
     private newRepo: FirestoreRepository<Documento>;
     private docId: string;
@@ -326,7 +303,7 @@ export class HandlerNotificar extends AbstractHandler {
                 return false;
             }
         } catch (error) {
-            console.error("Error al enviar notificación a los validadores", error);
+            console.error("Error al enviar notificación", error);
             return false;
         }
     }

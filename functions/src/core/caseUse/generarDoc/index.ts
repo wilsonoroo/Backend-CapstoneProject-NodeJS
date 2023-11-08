@@ -28,23 +28,30 @@ function FlujoGenerarDoc(repo: FirestoreRepository<Documento>,empresa:string,val
     const generarPDF = new HandlerGenerarPDF(empresa);
     // const notificacionPDF = new HandlerNotificacion("Generación de PDF","Se generó el PDF del documento");//*notificar al usuario creador
     const notificacionPDF = new HandlerNotificar(notificationService,mensajePDF,emisorTokens);//*notificar al usuario creador
-    const notificacionTieneProblemas = new HandlerNotificar(notificationService, mensajeProblema, validadores);//notificar a los validadores
-    const notificacionSinProblemas = new HandlerNotificar(notificationService, mensajeSinProblema, validadores);//notificar a los validadores
-    const updatear = new HandlerUpdateDocument(repo);
+    const notificacionTieneProblemas = new HandlerNotificar(notificationService, mensajeProblema, emisorTokens);//notificar a los validadores
+    const notificacionSinProblemas = new HandlerNotificar(notificationService, mensajeSinProblema, emisorTokens);//notificar a los validadores
+    const actualizacion = new HandlerUpdateDocument(repo);
     const estadoConProblemas = new HandlerCambioEstado(DocumentoEstado.conProblemas);
     const estadoSinProblemas = new HandlerCambioEstado(DocumentoEstado.sinProblemas);
     const estadoFinalizado = new HandlerCambioEstado(DocumentoEstado.finalizado);
     const estadoFinalizadoPlan = new HandlerCambioEstado(DocumentoEstado.finalizadoPlan);
     const estadoValidado = new HandlerCambioEstado(DocumentoEstado.validado);
 
-    arbol.insertarNodo([validacion,problemas,estadoConProblemas,notificacionTieneProblemas,updatear,null,null,null,null,estadoSinProblemas,notificacionSinProblemas,updatear,null,null,null,null,generarPDF,notificacionPDF,estadoValidado,planAccion,estadoFinalizadoPlan,updatear,null,null,null,estadoFinalizado,updatear]);
+    arbol.insertarNodo([validacion,problemas,estadoConProblemas,notificacionTieneProblemas,actualizacion,null,null,null,null,estadoSinProblemas,notificacionSinProblemas,actualizacion,null,null,null,null,generarPDF,notificacionPDF,estadoValidado,planAccion,estadoFinalizadoPlan,actualizacion,null,null,null,estadoFinalizado,actualizacion]);
     return arbol;
 }
 export async function procesarDocumentoFlujoGenerar(doc: Documento,repo: FirestoreRepository<Documento>,empresa:string) {
-    const validadores = doc?.cuadrilla?.validadores;
-    const validadoresTokens = validadores ? await getUserTokensFromMap(validadores) : [];
-    const NombreEmisor = doc.emisor.displayName;
-    const emisorTokens = await getUserTokensFromDisplayName(NombreEmisor);
-    const arbol = FlujoGenerarDoc(repo,empresa,validadoresTokens,emisorTokens);
-    arbol.procesarDocumento(doc);
+    try{
+        const validadores = doc?.cuadrilla?.validadores;
+        // if(!validadores ) throw console.log("error en el documento no hay validadores");
+        const validadoresTokens = validadores ? await getUserTokensFromMap(validadores) : [];
+        const nombreEmisor = doc.emisor.displayName;
+        const emisorTokens = await getUserTokensFromDisplayName(nombreEmisor);
+        if(!emisorTokens) throw console.log("error en el documento no hay emisor");
+        const arbol = FlujoGenerarDoc(repo,empresa,validadoresTokens,emisorTokens);
+        arbol.procesarDocumento(doc);
+    }catch(error){
+        console.log("Error al procesar documento en flujo de generación",error);
+    }
+
 }

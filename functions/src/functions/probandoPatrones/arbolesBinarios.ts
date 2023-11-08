@@ -2,19 +2,28 @@ import { Documento } from '../../core/models';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { plainToClass } from 'class-transformer';
 import { convertDocumentTimestampsToDate } from '../../core/utils';
-import { procesarDocumentoFlujoGenerar } from '../../core/caseUse/generarDoc';
+// import { procesarDocumentoFlujoGenerar } from '../../core/caseUse/generarDoc';
 import { procesarDocumentoFlujoActualizacion } from '../../core/caseUse/actualizarDocumentoPDF';
 import { FirestoreRepository } from '../../core/services/repository/FirestoreRepository';
+import { ArbolBinario, HandlerGenerarPDF } from '../../core/caseUse/builder';
 
-export const handler = onDocumentCreated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
+export const handler = onDocumentCreated("/auth/{id}", async(event)  => {
     const data = event.data?.data();
     const transformedData = convertDocumentTimestampsToDate(data);
     const doc = plainToClass(Documento, transformedData);
     console.log("--------caso de uso ----->");
-    const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
-    const repo = new FirestoreRepository<Documento>(rutaDoc);
-    const empresa = event.params.nombreEmpresa;
-    procesarDocumentoFlujoGenerar(doc,repo,empresa);
+    // const rutaDoc = `empresas/${event.params.nombreEmpresa}/gerencias/${event.params.nombreGerencia}/divisiones/${event.params.nombreDivision}/documentos`;
+    // const repo = new FirestoreRepository<Documento>(rutaDoc);
+    const empresa = "VAKU";
+    const generarPDF = new HandlerGenerarPDF(empresa);
+
+    const arbol = new ArbolBinario();
+    arbol.insertarNodo([generarPDF]);
+
+    arbol.procesarDocumento(doc);
+
+    
+
 })
 export const escuchandoCambios = onDocumentUpdated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
     const data = event.data?.after.data();

@@ -27,7 +27,7 @@ export function crearDoc(): Documento {
 	checklist.descripcion = 'descripcionChecklist';
 	checklist.faena = 'faenaChecklist';
 	const configuracion = new ConfiguracionChecklist();
-	configuracion.needValidacion = false;
+	configuracion.needValidacion = true;
 	configuracion.needPlanDeAccion = true;
 	configuracion.validacionGlobal = true;
 	configuracion.cantidadMaximaFotos = 10;

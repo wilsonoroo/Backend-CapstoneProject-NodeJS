@@ -11,7 +11,7 @@ export const agregarDocumento = https.onRequest(async (req: Request, res: Respon
     integrantes: {
       user11: {
         nombre: "wilson",
-        isFirmado: true
+        isFirmado: false
       },
       user21:{
         nombre: "miguel",
@@ -50,7 +50,7 @@ export const agregarDocumento = https.onRequest(async (req: Request, res: Respon
 
   // Agregar documento a Firestore
   try {
-    await repository.addDocumentById('doc12125555', documento);
+    await repository.addDocumentById('doc1313', documento);
     res.status(200).send({ success: true, message: 'Documento agregado con éxito' });
   } catch (error) {
     console.error('Error agregando el documento:', error);

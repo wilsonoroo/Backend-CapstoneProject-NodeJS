@@ -52,7 +52,7 @@ export const escuchando2 = onDocumentWritten("empresas/{idEmpresa}/gerencias/{id
     
 });
 
-async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, beforeData: Documento | undefined, validadoresTokens: string[], integrantesTokens: string[]): Promise<ArbolBinario> {
+async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, dataBefore: Documento | undefined, validadoresTokens: string[], integrantesTokens: string[]): Promise<ArbolBinario> {
     const arbol = new ArbolBinario();
     const notificationService = new NotificationService();
 
@@ -70,7 +70,7 @@ async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreR
     const moverDocumento = new HandlerMoverDocumento(newRepo, docId);
     const eliminarDocumentoOriginal = new HandlerEliminarDocumentoOriginal(repo, docId);
 
-    const verificarCreacion = new HandlerVerificarCreacion(beforeData);
+    const verificarCreacion = new HandlerVerificarCreacion(dataBefore);
     
     const mensajeNotificacion2 = {
         title: "FIRMA INTEGRANTES",
@@ -86,9 +86,9 @@ async function flujoIS(repo: FirestoreRepository<Documento>, newRepo: FirestoreR
 }
 
 
-export async function haciendoElFlujoIS(doc: Documento, repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, dataBefore: Documento | undefined, validadoresTokens: string[], integrantesTokens: string[]) {
-    const arbol = await flujoIS(repo, newRepo, docId, empresa, dataBefore, validadoresTokens, integrantesTokens);
-    arbol.procesarDocumento(doc);
+export async function haciendoElFlujoIS(dataAfter: Documento, repo: FirestoreRepository<Documento>, newRepo: FirestoreRepository<Documento>, docId: string, empresa: string, dataBefore: Documento | undefined, validadoresTokens: string[], integrantesTokens: string[]) {
+    const arbol = await flujoIS(repo, newRepo, docId, dataBefore, validadoresTokens, integrantesTokens);
+    arbol.procesarDocumento(dataAfter);
 }
 
 

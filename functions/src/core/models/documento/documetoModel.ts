@@ -34,6 +34,7 @@ export class Documento implements IDocumento< Integrante, User,Cuadrilla, Checkl
 	validadPor?: User|null;
 	validadoDobleChequeoPor?: User|null;
 	vistos?: any|null;
+    before: any
 
 	//ver si el documento necesita plan de accion 
 	needPlanDeAccion ():boolean{

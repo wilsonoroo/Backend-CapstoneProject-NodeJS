@@ -173,17 +173,17 @@ export class HandlerTienePlanAccion extends AbstractHandler{
 export class HandlerIsTipoIS extends AbstractHandler {
     handle(documento: Documento): boolean {
         try {
-            if (documento.checklist && documento.checklist.abreviatura === "IS") {
+            if (documento?.checklist?.abreviatura === "IS") {
                 console.log("El documento es tipo IS");
                 return true;
             } else {
                 console.log("El documento no es IS");
                 return false;
-            }            
+            }
         } catch (error) {
-            const customError = new CustomError('Error en HandlerIsTipoIS', "El documento no es tipo IS.");
-            console.error(customError.toString(), error);
-            return false;            
+            console.error('Error en HandlerIsTipoIS: El documento no es tipo IS.', error);
+            // Puedes decidir si quieres devolver falso o lanzar el error.
+            return false;
         }
     }
 }
@@ -298,44 +298,6 @@ export class HandlerEliminarDocumentoOriginal extends AbstractHandler {
 
 
 
-// export class HandlerNotificarValidadores extends AbstractHandler {
-//     private notificationService: NotificationService;
-//     private mensaje: any;
-
-//     constructor(notificationService: NotificationService, mensaje: any) {
-//         super();
-//         this.notificationService = notificationService;
-//         this.mensaje = mensaje;
-//     }
-
-//     async handle(documento: Documento): Promise<boolean> {
-//         try {
-//             if (documento.cuadrilla && documento.cuadrilla.validadores) {
-//                 const validadoresTokens = await getUserTokensFromMap(documento.cuadrilla.validadores);
-//                 if (validadoresTokens.length > 0) {
-//                     const response = await this.notificationService.sendNotificationMulticast(validadoresTokens, this.mensaje);
-//                     if (response.success) {
-//                         console.log("Notificación enviada exitosamente");
-//                         return true;
-//                     } else {
-//                         console.error("Error enviando notificación:", response.error);
-//                         return false;
-//                     }
-//                 } else {
-//                     console.log("No se encontraron tokens de validadores para enviar notificaciones");
-//                     return false;
-//                 }
-//             } else {
-//                 console.log("No hay validadores asignados o la estructura de cuadrilla no es correcta.");
-//                 return false;
-//             }
-//         } catch (error) {
-//             console.error("Error al enviar notificación a los validadores", error);
-//             return false;
-//         }
-//     }
-// }
-
 export class HandlerNotificar extends AbstractHandler {
     private notificationService: NotificationService;
     private mensaje: any;
@@ -360,7 +322,7 @@ export class HandlerNotificar extends AbstractHandler {
                     return false;
                 }
             } else {
-                console.log("No se encontraron tokens de validadores para enviar notificaciones");
+                console.log("No se encontraron tokens para enviar notificaciones");
                 return false;
             }
         } catch (error) {
@@ -372,4 +334,22 @@ export class HandlerNotificar extends AbstractHandler {
 
 
 
+export class HandlerVerificarCreacion extends AbstractHandler {
+    private beforeData: Documento | undefined;
+
+    constructor(beforeData: Documento | undefined) {
+        super();
+        this.beforeData = beforeData;
+    }
+
+    handle(documento: Documento): boolean {
+        if (this.beforeData === undefined) {
+            console.log("El documento ha sido recién creado");
+            return true;
+        } else {
+            console.log("El documento es una actualización, no una creación");
+            return false;
+        }
+    }
+}
 

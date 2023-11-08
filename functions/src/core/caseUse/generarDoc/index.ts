@@ -1,6 +1,7 @@
 import { Documento } from "../../models";
 import { FirestoreRepository } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
+import { IRepository } from "../../services/repository/IRepository";
 import {  DocumentoEstado, mensaje } from "../../utils";
 import { getUserTokensFromMap } from "../../utils/getTokens";
 import { getUserTokensFromDisplayName } from "../../utils/obtenerEmisor/getTokenEmisor";
@@ -16,7 +17,7 @@ import {
     HandlerNotificar, 
     } from "../builder";
 
-function FlujoGenerarDoc(repo: FirestoreRepository<Documento>,empresa:string,validadores:string[],emisorTokens:string[]): ArbolBinario {
+function FlujoGenerarDoc(repo: IRepository<Documento>,empresa:string,validadores:string[],emisorTokens:string[]): ArbolBinario {
     const arbol = new ArbolBinario();
     const notificationService = new NotificationService();
     const mensajeProblema = mensaje("Importante","Documento generado con problemas.");
@@ -40,7 +41,7 @@ function FlujoGenerarDoc(repo: FirestoreRepository<Documento>,empresa:string,val
     arbol.insertarNodo([validacion,problemas,estadoConProblemas,notificacionTieneProblemas,actualizacion,null,null,null,null,estadoSinProblemas,notificacionSinProblemas,actualizacion,null,null,null,null,generarPDF,notificacionPDF,estadoValidado,planAccion,estadoFinalizadoPlan,actualizacion,null,null,null,estadoFinalizado,actualizacion]);
     return arbol;
 }
-export async function procesarDocumentoFlujoGenerar(doc: Documento,repo: FirestoreRepository<Documento>,empresa:string) {
+export async function procesarDocumentoFlujoGenerar(doc: Documento,repo: IRepository<Documento>,empresa:string) {
     try{
         const validadores = doc?.cuadrilla?.validadores;
         // if(!validadores ) throw console.log("error en el documento no hay validadores");

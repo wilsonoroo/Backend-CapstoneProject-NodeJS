@@ -1,4 +1,4 @@
-interface IRepository<T> {
+export interface IRepository<T> {
 	// Metodos para manejos de documentos o nodos
 	// Metodos asociados a obtencion de datos
 	getDocument<T>(documentId: string): Promise<T | null>

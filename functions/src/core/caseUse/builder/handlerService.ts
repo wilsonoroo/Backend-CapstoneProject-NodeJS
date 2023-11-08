@@ -1,7 +1,8 @@
 import { Documento } from "../../models";
 // import { EnkiCreator, FirestoreRepository, Storage } from "../../services";
-import {  FirestoreRepository, Storage } from "../../services";
+import { Storage } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
+import { IRepository } from "../../services/repository/IRepository";
 import {  convertDocumentDatesToTimestamps, mensaje } from "../../utils";
 import { CustomError } from "../../utils/customError/customError";
 import { AbstractHandler } from "./chainOfResponsability";
@@ -63,8 +64,8 @@ export class HandlerNotificacion extends AbstractHandler {
 }
   
 export class HandlerUpdateDocument extends AbstractHandler{
-    repositorio: FirestoreRepository<Documento>;
-    constructor(repositorio: FirestoreRepository<Documento>) {
+    repositorio: IRepository<Documento>;
+    constructor(repositorio: IRepository<Documento>) {
         super();
         this.repositorio = repositorio; 
     }

@@ -60,8 +60,3 @@ describe(' 4) El Flujo generar documento debe actualizar el estado de un documen
     });
 });
 
-
-describe('El Flujo IS', function() {
-    it('LUCIANO chupalo', function() {
-    });
-});

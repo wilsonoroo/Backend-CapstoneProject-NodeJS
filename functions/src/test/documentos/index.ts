@@ -1,4 +1,4 @@
-import { Checklist, ConfiguracionChecklist, Documento, Integrante, Respuesta } from "../../core/models";
+import { Checklist, ConfiguracionChecklist, Cuadrilla, Documento, Integrante, Respuesta } from "../../core/models";
 
 export function documentoConProblemas(): Documento {
 	const user = new Integrante();
@@ -286,4 +286,57 @@ export function documentoRechazadoYNecesitaPlanAccion(): Documento {
     checklist.configuracion = configuracion;	
     doc.checklist = checklist;
 	return doc
+}
+
+export function documentoIS(): Documento {
+
+    const checklist = new Checklist();
+    checklist.abreviatura = 'IS';
+    
+    const user = new Integrante();
+    user.id = 'idUsuarios';
+    user.email = 'idUsuarios@gmail.com';
+    
+    const doc = new Documento();
+    doc.id = 'd1';
+    doc.isConCuadrilla = true;
+    doc.isAutoValidado = true;
+    doc.isPlanDeAccion = false;
+    doc.emisor = user;
+    doc.estado = 'generado';
+
+    // Crear integrantes adicionales
+    const integrante1 = new Integrante();
+    integrante1.isFirmado = true;
+    integrante1.email = 'integrante1@gmail.com';
+    
+    const integrante2 = new Integrante();
+    integrante2.isFirmado = true;
+    integrante2.email = 'integrante2@gmail.com';
+
+    // Crear validadores
+    const validador1 = new Integrante();
+    validador1.id = 'idValidador1';
+    validador1.email = 'validador1@gmail.com';
+    
+    const validador2 = new Integrante();
+    validador2.id = 'idValidador2';
+    validador2.email = 'validador2@gmail.com';
+
+
+    // La creación de Checklist se omite ya que no es relevante para la cuadrilla
+
+    const cuadrilla = new Cuadrilla();
+    cuadrilla.id = 'idCuadrilla';
+    cuadrilla.nombre = 'Nombre de la Cuadrilla';
+    
+    // Añadir integrantes y validadores a las listas correspondientes
+    cuadrilla.integrantes = [integrante1, integrante2];
+    cuadrilla.validadores = [validador1, validador2];
+
+    // Agregar la cuadrilla al documento
+    doc.cuadrilla = cuadrilla;
+    doc.checklist = checklist;
+
+    return doc;
 }

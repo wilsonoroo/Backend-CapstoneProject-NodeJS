@@ -113,8 +113,3 @@ describe(' 11) Debe procesar el Flujo de actualizar documento y cambiar su estad
     });
 });
 
-
-describe('El Flujo IS', function() {
-    it('LUCIANO GAY', function() {
-    });
-});

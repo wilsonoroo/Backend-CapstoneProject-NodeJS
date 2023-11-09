@@ -73,7 +73,7 @@
 		//"declarationMap": true,
 		//"esModuleInterop": true
 	},
-	"include": ["src","test"],
+	"include": ["src"],
 	// "include": ["src", "src/**/*", "src/**/*/*", ".eslintrc.js"],
 	//"exclude": ["node_modules/**"],
 	"compileOnSave": false

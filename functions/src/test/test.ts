@@ -38,3 +38,14 @@ describe('El Flujo debe actualizar el estado de un documento', function() {
         // assert.strictEqual(doc.estado, 'doc_con_problemas');
     });
 });
+
+
+describe('El Flujo IS', function() {
+    it('LUCIANO GAY', function() {
+        
+
+
+
+
+    });
+});

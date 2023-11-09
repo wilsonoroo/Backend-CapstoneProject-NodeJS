@@ -1,4 +1,5 @@
 import {getFirestore} from 'firebase-admin/firestore'
+import { IRepository } from './IRepository'
 
 /* The FirestoreRepository class is an implementation of the IFirestoreRepository interface. */
 export class FirestoreRepository<T> implements IRepository<any> {

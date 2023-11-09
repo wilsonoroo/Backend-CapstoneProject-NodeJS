@@ -1,5 +1,5 @@
 import { Documento } from "../../models";
-import { FirestoreRepository } from "../../services";
+// import { FirestoreRepository } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
 import { IRepository } from "../../services/repository/IRepository";
 import {  DocumentoEstado, mensaje } from "../../utils";
@@ -46,8 +46,8 @@ export async function procesarDocumentoFlujoGenerar(doc: Documento,repo: IReposi
         const validadores = doc?.cuadrilla?.validadores;
         // if(!validadores ) throw console.log("error en el documento no hay validadores");
         const validadoresTokens = validadores ? await getUserTokensFromMap(validadores) : [];
-        const nombreEmisor = doc.emisor.displayName;
-        const emisorTokens = await getUserTokensFromDisplayName(nombreEmisor);
+        const idEmisor = doc.emisor.id;
+        const emisorTokens = await getUserTokensFromDisplayName(idEmisor);
         if(!emisorTokens) throw console.log("error en el documento no hay emisor");
         const arbol = FlujoGenerarDoc(repo,empresa,validadoresTokens,emisorTokens);
         arbol.procesarDocumento(doc);

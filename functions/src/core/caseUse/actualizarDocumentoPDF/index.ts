@@ -49,7 +49,7 @@ function FlujoActualizarPDF(repo: FirestoreRepository<Documento>,empresa:string,
 }
 export async function procesarDocumentoFlujoActualizacion(doc: Documento,docAnterior:Documento,repo: FirestoreRepository<Documento>,empresa:string) {
     try{
-        const nombreEmisor = doc.emisor.displayName;
+        const nombreEmisor = doc.emisor.id;
         if(!nombreEmisor) throw console.log("error en el documento no hay emisor");
         const emisorTokens = await getUserTokensFromDisplayName(nombreEmisor);
         const arbol = FlujoActualizarPDF(repo,empresa,emisorTokens);

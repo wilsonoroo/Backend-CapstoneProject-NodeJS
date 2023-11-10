@@ -1,1 +1,1 @@
-export * from './contadorDocumentosPorUsuario';
+export * from './contadornew';

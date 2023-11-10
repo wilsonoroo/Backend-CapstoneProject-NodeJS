@@ -7,7 +7,7 @@ import { FirestoreRepository } from '../../core/services/repository/FirestoreRep
  * Función Cloud de Firebase que se dispara cuando se escribe un documento en la ruta especificada (creado, actualizado o eliminado).
  * Principalmente se usa para administrar contadores distribuidos en base al estado de los datos del "Documento".
  */
-export const contando = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentos/{docId}", async(event) => {
+export const contadorDistribuidoParaUsuario = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentos/{docId}", async(event) => {
     try {
         const snapshot = event.data;
         

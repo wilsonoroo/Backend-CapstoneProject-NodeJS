@@ -333,3 +333,8 @@ export class HandlerVerificarCreacion extends AbstractHandler {
     }
 }
 
+export class HandlerTrue extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        return true;
+    }
+}

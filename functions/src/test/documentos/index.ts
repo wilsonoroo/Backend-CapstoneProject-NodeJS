@@ -309,6 +309,7 @@ export function documentoIS(): Documento {
     const integrante1 = new Integrante();
     integrante1.isFirmado = true;
     integrante1.email = 'integrante1@gmail.com';
+	integrante1.id = 'idIntegrante1';
     
     const integrante2 = new Integrante();
     integrante2.isFirmado = true;
@@ -329,6 +330,8 @@ export function documentoIS(): Documento {
     const cuadrilla = new Cuadrilla();
     cuadrilla.id = 'idCuadrilla';
     cuadrilla.nombre = 'Nombre de la Cuadrilla';
+
+
     
     // Añadir integrantes y validadores a las listas correspondientes
     cuadrilla.integrantes = [integrante1, integrante2];

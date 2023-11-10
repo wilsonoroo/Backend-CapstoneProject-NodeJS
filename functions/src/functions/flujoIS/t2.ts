@@ -11,7 +11,7 @@ import { getUserTokensFromMap } from '../../core/utils/getTokens';
 
 
 
-export const escuchando2 = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentosRespaldo/{docId}", async(event) => {    
+export const flujoISArboles = onDocumentWritten("empresas/{idEmpresa}/gerencias/{idGerencia}/divisiones/{idDivision}/documentosRespaldo/{docId}", async(event) => {    
     const snapshot = event.data;
     if (!snapshot) {
         console.log("No data associated with the event");

@@ -5,7 +5,7 @@ import { convertDocumentTimestampsToDate } from '../../core/utils';
 import { procesarDocumentoFlujoActualizacion } from '../../core/caseUse/actualizarDocumentoPDF';
 import { FirestoreRepository } from '../../core/services/repository/FirestoreRepository';
 
-export const actualizarDocumento = onDocumentUpdated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
+export const FlujoactualizarDocumentoArboles = onDocumentUpdated("empresas/{nombreEmpresa}/gerencias/{nombreGerencia}/divisiones/{nombreDivision}/documentos/{docId}", async(event)  => {
     const data = event.data?.after.data();
     const transformedData = convertDocumentTimestampsToDate(data);
     const doc = plainToClass(Documento, transformedData);

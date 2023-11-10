@@ -42,7 +42,6 @@ export class Storage{
           file.save(pdf, options)
             .then(() => {
               const urlFile = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(this.filePath)}?alt=media&token=${this.token}`;
-              // const urlFile = "https://firebasestorage.googleapis.com/v0" + file.parent.baseUrl + "/" + bucket.name + file.baseUrl + "/" + empresa + "%2Fpdf%2F" + this.id + "?alt=media&token=" + this.token;
               const nombrePDF = `${empresa}_pdf_${this.id}.pdf`;
               console.log("la url es: ",urlFile)
               archivo.id = this.id;

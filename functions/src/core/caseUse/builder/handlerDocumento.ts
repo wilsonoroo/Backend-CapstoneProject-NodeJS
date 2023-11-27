@@ -1,6 +1,7 @@
 import { Documento } from "../../models";
-import { FirestoreRepository } from "../../services";
+// import { FirestoreRepository } from "../../services";
 import NotificationService from "../../services/notificacion/notificacionFCM";
+import { IRepository } from "../../services/repository/IRepository";
 // import NotificationService from "../../services/notificacion/notificacionFCM";
 // import { FirestoreRepository } from "../../services";
 import { CustomError } from "../../utils/customError/customError";
@@ -229,10 +230,10 @@ export class HandlerEstadoGenerado extends AbstractHandler {
 }
 
 export class HandlerMoverDocumento extends AbstractHandler {
-    private newRepo: FirestoreRepository<Documento>;
+    private newRepo: IRepository<Documento>;
     private docId: string;
 
-    constructor(newRepo: FirestoreRepository<Documento>, docId: string) {
+    constructor(newRepo: IRepository<Documento>, docId: string) {
         super();
         this.newRepo = newRepo;
         this.docId = docId;
@@ -253,10 +254,10 @@ export class HandlerMoverDocumento extends AbstractHandler {
 }
 
 export class HandlerEliminarDocumentoOriginal extends AbstractHandler {
-    private repo: FirestoreRepository<Documento>;
+    private repo: IRepository<Documento>;
     private docId: string;
 
-    constructor(repo: FirestoreRepository<Documento>, docId: string) {
+    constructor(repo: IRepository<Documento>, docId: string) {
         super();
         this.repo = repo;
         this.docId = docId;
@@ -275,8 +276,6 @@ export class HandlerEliminarDocumentoOriginal extends AbstractHandler {
         }
     }
 }
-
-
 
 export class HandlerNotificar extends AbstractHandler {
     private notificationService: NotificationService;
@@ -336,5 +335,23 @@ export class HandlerVerificarCreacion extends AbstractHandler {
 export class HandlerTrue extends AbstractHandler {
     handle(documento: Documento): boolean {
         return true;
+    }
+}
+
+export class HandlerIsTipoIO extends AbstractHandler {
+    handle(documento: Documento): boolean {
+        try {
+            if (documento?.checklist?.abreviatura === "IO") {
+                console.log("El documento es tipo IO");
+                return true;
+            } else {
+                console.log("El documento no es IO");
+                return false;
+            }
+        } catch (error) {
+            console.error('Error en HandlerIsTipoIO: El documento no es tipo IO.', error);
+            // Puedes decidir si quieres devolver falso o lanzar el error.
+            return false;
+        }
     }
 }

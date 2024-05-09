@@ -2,10 +2,10 @@ import { Checklist, ConfiguracionChecklist, Cuadrilla, Documento, Integrante, Re
 
 export function documentoConProblemas(): Documento {
 	const user = new Integrante();
-	user.id = 'idUsuarios';
+	user.id = 'userTest1';
 	user.email = 'idUsuarios@gmail.com';
 	const doc = new Documento();
-	doc.id = 'd1';
+	doc.id = 'docTest2';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = false;

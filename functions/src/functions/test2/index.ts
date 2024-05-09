@@ -9,11 +9,10 @@ import { Storage } from '../../core/services/storage/storage';
 //Metodos de prueba de funcionalidaes
 export function crearDoc(): Documento {
 	const user = new Integrante();
-	user.id = 'idUsuarios';
+	user.id = 'userTest1';
 	user.email = 'idUsuarios@gmail.com';
-	user.displayName = 'Miguel';
 	const doc = new Documento();
-	doc.id = 'd1';
+	doc.id = 'docTest1';
 	doc.isConCuadrilla= true;
 	doc.isAutoValidado = true;
 	doc.isPlanDeAccion = false;
@@ -58,15 +57,13 @@ export function crearDoc(): Documento {
 	respuestaC2.contenido = 'contenidoChito2';
 	respuestaC2.titulo = 'tituloChiquito2';
 	respuestaC2.tipo = 'tipoChiquito2';
-	// doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
+	doc.respuestasMalas.push(respuesta1,respuesta2,respuesta3);
 	doc.respuestasMalasChildren.push(respuestaC1,respuestaC2);
-	
-	
 	return doc
 }
 
 export const generarDoc = onRequest(async (request: Request, response: Response) => {
-    const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/divisiones-1/documentos';
+    const rutaDoc = '/empresas/VAKU/gerencias/gerencia-1/divisiones/division-1/documentos';
     // const rutaDoc = '/documentos';
     const repo = new FirestoreRepository<Documento>(rutaDoc);
     const doc2 = crearDoc();

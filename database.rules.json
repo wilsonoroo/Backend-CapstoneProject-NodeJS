@@ -5,7 +5,7 @@
     "empresas":{
       "$key_empresa":{
        	"documentos":{
-     			".indexOn":["estado","fechaCreacion","correlativo",".value","fechaCreacionInt"],   
+     			".indexOn":["estado","fechaCreacion","correlativo",".value","fechaCreacionInt"]  
         },
         "documentos_por_mes":{
           "$key_documento_por_mes": {
